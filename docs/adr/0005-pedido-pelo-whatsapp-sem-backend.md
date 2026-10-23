@@ -22,6 +22,6 @@ A loja já atende e fecha pedidos pelo WhatsApp. Pagamento online, carrinho com 
 
 ## Consequências
 
-- O "Montar pedido" com vários itens guarda no navegador do cliente só produto, variação e quantidade, sem dado pessoal (PR seguinte).
+- O "Montar pedido" com vários itens guarda no navegador do cliente só produto, variação e quantidade, sem dado pessoal ([ADR-0006](0006-montar-pedido-no-navegador.md)).
 - O atendimento e os dados trocados no WhatsApp são responsabilidade da loja, não do site.
 - Um link de WhatsApp sem o 55 do Brasil, como o que hoje está no bio.site da loja, não passa na validação.

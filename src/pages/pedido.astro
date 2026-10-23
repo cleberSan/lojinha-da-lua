@@ -1,0 +1,49 @@
+---
+import { getCollection } from "astro:content";
+import { formatMonthYear, orderContact, store } from "../config/store";
+import { sortProducts } from "../domain/catalog";
+import { toOrderCatalogEntry } from "../domain/order";
+import OrderBuilder from "../islands/OrderBuilder";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const catalog = sortProducts(await getCollection("products")).map(toOrderCatalogEntry);
+---
+
+<BaseLayout
+  title="Meu pedido"
+  description="Junte produtos da Lojinha Da Lua e envie o pedido completo numa mensagem só pelo WhatsApp."
+>
+  <div class="container section">
+    <h1>Meu pedido</h1>
+    <p class="lead">
+      Junte produtos do catálogo e envie tudo numa mensagem só pelo WhatsApp. O pedido fica guardado
+      só neste aparelho.
+    </p>
+
+    <OrderBuilder client:load catalog={catalog} storeName={store.name} phone={orderContact.phone} />
+    <noscript>
+      <p class="lead">
+        Para montar o pedido aqui, ative o JavaScript. Você também pode pedir cada produto pelo
+        botão do WhatsApp na página dele.
+      </p>
+      <a class="button button-primary" href="/produtos">
+        Ver produtos
+      </a>
+    </noscript>
+
+    <p class="muted small note">
+      Valores de referência de {formatMonthYear(store.pricesAsOf)}. Veja em{" "}
+      <a href="/privacidade">Privacidade</a> como o pedido é guardado.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .note {
+    margin-top: 2rem;
+  }
+
+  .small {
+    font-size: 0.95rem;
+  }
+</style>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPricesAsOf, orderContact, parseStore, store } from "./store";
+import { formatMonthYear, orderContact, parseStore, store } from "./store";
 
 const valid = {
   name: "Lojinha Da Lua",
@@ -59,9 +59,9 @@ describe("store", () => {
   });
 });
 
-describe("formatPricesAsOf", () => {
+describe("formatMonthYear", () => {
   it("escreve o mês por extenso", () => {
-    expect(formatPricesAsOf("2026-10")).toBe("outubro de 2026");
-    expect(formatPricesAsOf("2027-01")).toBe("janeiro de 2027");
+    expect(formatMonthYear("2026-10")).toBe("outubro de 2026");
+    expect(formatMonthYear("2027-01")).toBe("janeiro de 2027");
   });
 });

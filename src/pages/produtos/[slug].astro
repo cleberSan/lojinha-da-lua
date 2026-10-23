@@ -1,14 +1,18 @@
 ---
 import type { GetStaticPaths } from "astro";
+import { getImage } from "astro:assets";
 import { getCollection, type CollectionEntry } from "astro:content";
 import ProductCard from "../../components/ProductCard.astro";
 import ProductImage from "../../components/ProductImage.astro";
 import WhatsAppButton from "../../components/WhatsAppButton.astro";
-import { formatPricesAsOf, orderContact, store } from "../../config/store";
-import { categories, relatedProducts } from "../../domain/catalog";
+import { formatMonthYear, orderContact, store } from "../../config/store";
+import { categories, relatedProducts, sortProducts } from "../../domain/catalog";
 import { formatBRL } from "../../domain/money";
+import { toOrderCatalogEntry, toOrderLine } from "../../domain/order";
+import { breadcrumbJsonLd, productJsonLd } from "../../domain/seo";
 import { buildOrderMessage } from "../../domain/whatsapp";
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import AddToOrder from "../../islands/AddToOrder";
+import BaseLayout, { type ShareImage } from "../../layouts/BaseLayout.astro";
 
 export const getStaticPaths = (async () => {
   const products = await getCollection("products");
@@ -26,23 +30,56 @@ interface Props {
 const { product, products } = Astro.props;
 const { name, category, technique, summary, image, variants, notes } = product.data;
 const singleVariant = variants.length === 1;
+const orderCatalog = sortProducts(products).map(toOrderCatalogEntry);
+const orderEntry = toOrderCatalogEntry(product);
 
-const offers = variants.map((variant) => ({
+const offers = orderEntry.variants.map((variant) => ({
   ...variant,
   price: formatBRL(variant.priceCents),
-  message: buildOrderMessage(store.name, [
-    {
-      productName: name,
-      variantLabel: singleVariant ? undefined : variant.label,
-      unitPriceCents: variant.priceCents,
-      quantity: 1,
-    },
-  ]),
+  message: buildOrderMessage(store.name, [toOrderLine(orderEntry, variant, 1)]),
 }));
 const related = relatedProducts(products, product);
+
+// Prévia do link e JSON-LD (ADR-0007): só foto da loja representa o produto; ilustração
+// provisória fica de fora e a prévia usa a imagem da marca.
+let shareImage: ShareImage | undefined;
+if (image.kind === "foto") {
+  const photo = await getImage({
+    src: image.src,
+    format: "jpeg",
+    width: Math.min(800, image.src.width),
+  });
+  shareImage = {
+    src: photo.src,
+    width: Number(photo.attributes["width"]),
+    height: Number(photo.attributes["height"]),
+    alt: image.alt,
+  };
+}
+
+const site = Astro.site;
+const url = (path: string) => new URL(path, site).href;
+const jsonLd = site
+  ? [
+      productJsonLd({
+        name,
+        description: summary,
+        url: url(`/produtos/${product.id}`),
+        category: categories[category].name,
+        imageUrl: shareImage ? url(shareImage.src) : undefined,
+        sellerName: store.name,
+        pricesCents: variants.map((variant) => variant.priceCents),
+      }),
+      breadcrumbJsonLd([
+        { name: "Início", url: url("/") },
+        { name: categories[category].name, url: url(`/produtos#${category}`) },
+        { name, url: url(`/produtos/${product.id}`) },
+      ]),
+    ]
+  : undefined;
 ---
 
-<BaseLayout title={name} description={summary}>
+<BaseLayout title={name} description={summary} image={shareImage} jsonLd={jsonLd}>
   <div class="container section">
     <nav aria-label="Trilha de navegação" class="breadcrumb">
       <ol>
@@ -94,9 +131,21 @@ const related = relatedProducts(products, product);
           </ul>
         )}
         <p class="muted small">
-          Valores de referência de {formatPricesAsOf(store.pricesAsOf)}. O pedido abre o WhatsApp
-          com a mensagem pronta, e o valor final é confirmado na conversa.
+          Valores de referência de {formatMonthYear(store.pricesAsOf)}. O pedido abre o WhatsApp com
+          a mensagem pronta, e o valor final é confirmado na conversa.
         </p>
+
+        <AddToOrder
+          client:visible={{ rootMargin: "300px" }}
+          catalog={orderCatalog}
+          slug={product.id}
+        />
+        <noscript>
+          <p class="muted small">
+            Para juntar vários produtos num pedido só, ative o JavaScript. Os botões Pedir acima
+            funcionam sem ele.
+          </p>
+        </noscript>
       </div>
     </article>
 

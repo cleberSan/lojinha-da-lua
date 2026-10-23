@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 import { z } from "astro/zod";
 import { describe, expect, it } from "vitest";
 import { createProductSchema } from "../domain/catalog";
+import { MAX_ORDER_ITEMS, toOrderLine } from "../domain/order";
+import { buildOrderMessage, MAX_QUANTITY } from "../domain/whatsapp";
 
 const productsDir = join(dirname(fileURLToPath(import.meta.url)), "produtos");
 const schema = createProductSchema(z.string());
@@ -61,5 +63,17 @@ describe("catálogo", () => {
   it("não repete a ordem dentro da mesma categoria", () => {
     const keys = products.map((product) => `${product.data.category}:${product.data.order}`);
     expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it("o maior pedido possível cabe numa mensagem do WhatsApp", () => {
+    // Toda variação do catálogo com a quantidade máxima: se um produto novo ou um nome longo
+    // estourar o limite da mensagem, o teste avisa antes do site.
+    const lines = products.flatMap((product) =>
+      product.data.variants.map((variant) =>
+        toOrderLine({ slug: product.slug, ...product.data }, variant, MAX_QUANTITY),
+      ),
+    );
+    expect(lines.length).toBeLessThanOrEqual(MAX_ORDER_ITEMS);
+    expect(() => buildOrderMessage("Lojinha Da Lua", lines)).not.toThrow();
   });
 });

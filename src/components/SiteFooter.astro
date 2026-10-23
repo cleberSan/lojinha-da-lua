@@ -1,9 +1,11 @@
 ---
-import { formatPricesAsOf, store } from "../config/store";
+import { formatMonthYear, store } from "../config/store";
 import { formatBrazilianMobile } from "../domain/phone";
 import { buildWhatsAppUrl } from "../domain/whatsapp";
 import ExternalLink from "./ExternalLink.astro";
 import Icon from "./Icon.astro";
+
+const repositoryUrl = "https://github.com/cleberSan/lojinha-da-lua";
 ---
 
 <footer class="site-footer">
@@ -12,10 +14,27 @@ import Icon from "./Icon.astro";
       <h2 id="footer-store">{store.name}</h2>
       <p class="muted">{store.tagline}</p>
       <p class="muted small">
-        Preços de referência de {formatPricesAsOf(store.pricesAsOf)}. O valor final é confirmado no
+        Preços de referência de {formatMonthYear(store.pricesAsOf)}. O valor final é confirmado no
         WhatsApp.
       </p>
     </section>
+    <nav aria-labelledby="footer-site">
+      <h2 id="footer-site">Navegue</h2>
+      <ul>
+        <li>
+          <a href="/produtos">Produtos</a>
+        </li>
+        <li>
+          <a href="/pedido">Meu pedido</a>
+        </li>
+        <li>
+          <a href="/contato">Contato</a>
+        </li>
+        <li>
+          <a href="/privacidade">Privacidade</a>
+        </li>
+      </ul>
+    </nav>
     <section aria-labelledby="footer-contact">
       <h2 id="footer-contact">Contato</h2>
       <ul>
@@ -39,11 +58,7 @@ import Icon from "./Icon.astro";
     </section>
   </div>
   <p class="container credit small muted">
-    Site feito por{" "}
-    <ExternalLink href="https://github.com/cleberSan/lojinha-da-lua">
-      Cleber Costa Santos
-    </ExternalLink>
-    .
+    Site feito por <ExternalLink href={repositoryUrl}>Cleber Costa Santos</ExternalLink>
   </p>
 </footer>
 
@@ -58,7 +73,7 @@ import Icon from "./Icon.astro";
   .grid {
     display: grid;
     gap: 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   }
 
   h2 {

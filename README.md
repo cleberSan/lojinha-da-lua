@@ -9,18 +9,22 @@ Construído com Astro 7 e TypeScript, publicado como site estático na Cloudflar
 
 ## O que tem no site
 
-| Rota               | Conteúdo                                                                  |
-| ------------------ | ------------------------------------------------------------------------- |
-| `/`                | Apresentação, categorias, alguns produtos, como funciona e contato        |
-| `/produtos`        | Catálogo agrupado em camisetas e canecas, com preço "a partir de"         |
-| `/produtos/<slug>` | Variações e preços, observações da loja e um botão de pedido por variação |
-| qualquer outra     | Página 404 no visual da loja, com status HTTP 404                         |
+| Rota               | Conteúdo                                                                         |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `/`                | Apresentação, categorias, alguns produtos, como funciona e contato               |
+| `/produtos`        | Catálogo agrupado em camisetas e canecas, com preço "a partir de"                |
+| `/produtos/<slug>` | Variações e preços, observações da loja, botão de pedido e "Montar pedido"       |
+| `/pedido`          | Meu pedido: revisa quantidades e envia todos os itens numa mensagem só           |
+| `/contato`         | WhatsApp e Instagram da loja                                                     |
+| `/privacidade`     | O que o site guarda (só o pedido, no aparelho) e quem trata os dados da conversa |
+| qualquer outra     | Página 404 no visual da loja, com status HTTP 404                                |
 
-Cada botão de pedido abre `wa.me` com a mensagem pronta (produto, variação, preço e total de referência). O site não tem backend e não coleta dado pessoal ([ADR-0005](docs/adr/0005-pedido-pelo-whatsapp-sem-backend.md)).
+Cada botão de pedido abre `wa.me` com a mensagem pronta (produto, variação, preço e total de referência). O "Montar pedido" junta vários produtos no navegador do cliente e envia tudo de uma vez. O site não tem backend e não coleta dado pessoal ([ADR-0005](docs/adr/0005-pedido-pelo-whatsapp-sem-backend.md), [ADR-0006](docs/adr/0006-montar-pedido-no-navegador.md)).
 
 ## Qualidade
 
-- Páginas estáticas e zero JavaScript por padrão; imagens em AVIF e WebP geradas no build ([ADR-0001](docs/adr/0001-stack-astro-estatico.md)).
+- Páginas estáticas e zero JavaScript por padrão; React só nas ilhas do pedido; imagens em AVIF e WebP geradas no build ([ADR-0001](docs/adr/0001-stack-astro-estatico.md), [ADR-0006](docs/adr/0006-montar-pedido-no-navegador.md)).
+- Prévia de link no WhatsApp e no Instagram (Open Graph), canonical, JSON-LD de loja e produtos, sitemap e robots.txt, sem dependência nova ([ADR-0007](docs/adr/0007-seo-e-previa-de-links.md)).
 - Catálogo validado por schema: preço, variação ou imagem fora do formato quebram o build. Um teste compara os preços com os flyers da loja.
 - CSP por hash sem `'unsafe-inline'`, HSTS e demais cabeçalhos de segurança, de uma fonte só ([ADR-0004](docs/adr/0004-csp-por-hash-e-cabecalhos.md)).
 - Testes de unidade com Vitest (mínimo de 80% de cobertura no CI) e E2E com Playwright em desktop e celular, com axe (WCAG 2.1 AA), sobre o build servido pelo mesmo runtime da Cloudflare.
@@ -28,7 +32,7 @@ Cada botão de pedido abre `wa.me` com a mensagem pronta (produto, variação, p
 
 ## Decisões
 
-As decisões arquiteturais estão em [docs/adr](docs/adr): stack, hospedagem gratuita na Cloudflare (a Vercel Hobby não permite uso comercial), imagens sem personagens de terceiros, CSP e pedido pelo WhatsApp.
+As decisões arquiteturais estão em [docs/adr](docs/adr): stack, hospedagem gratuita na Cloudflare (a Vercel Hobby não permite uso comercial), imagens sem personagens de terceiros, CSP, pedido pelo WhatsApp, "Montar pedido" no navegador e SEO.
 
 ## Rodando localmente
 

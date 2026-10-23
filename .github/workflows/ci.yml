@@ -51,6 +51,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          # Endereço do `wrangler dev` dos testes E2E; a Cloudflare usa o de produção (ADR-0007).
+          SITE_URL: http://127.0.0.1:8787
 
       - name: Instalar Chromium para os testes E2E
         run: npx playwright install --with-deps chromium

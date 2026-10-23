@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import { getImage, Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import logo from "../assets/marca/logo.png";
 import Icon from "../components/Icon.astro";
@@ -10,6 +10,7 @@ import ExternalLink from "../components/ExternalLink.astro";
 import { orderContact, store } from "../config/store";
 import { groupByCategory, startingPriceCents } from "../domain/catalog";
 import { formatBRL } from "../domain/money";
+import { organizationJsonLd, webSiteJsonLd } from "../domain/seo";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const groups = groupByCategory(await getCollection("products"));
@@ -23,7 +24,7 @@ const categoryCards = groups.map((group) => ({
 const steps = [
   {
     title: "Escolha o produto",
-    text: "Veja os modelos, os tamanhos de estampa e os preços no catálogo.",
+    text: "Veja os modelos, os tamanhos de estampa e os preços no catálogo, e junte o que quiser em Meu pedido.",
   },
   {
     title: "Mande a sua ideia",
@@ -34,9 +35,26 @@ const steps = [
     text: "O botão de pedido abre o WhatsApp com a mensagem pronta. Valor final, prazo e entrega são combinados na conversa.",
   },
 ];
+
+// JSON-LD da loja (ADR-0007), só quando o build conhece o endereço do site.
+const site = Astro.site;
+const logoImage = await getImage({ src: logo, format: "png" });
+const jsonLd = site
+  ? [
+      organizationJsonLd({
+        name: store.name,
+        url: site.href,
+        logoUrl: new URL(logoImage.src, site).href,
+        description: store.description,
+        sameAs: [store.instagram.url],
+        phone: orderContact.phone,
+      }),
+      webSiteJsonLd(store.name, site.href),
+    ]
+  : undefined;
 ---
 
-<BaseLayout description={store.description}>
+<BaseLayout description={store.description} jsonLd={jsonLd}>
   <section class="hero container section" aria-labelledby="titulo">
     <div class="hero-text">
       <p class="pill">Personalizados</p>

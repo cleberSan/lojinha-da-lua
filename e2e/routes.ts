@@ -6,6 +6,16 @@ export const productSlugs = readdirSync(new URL("../src/content/produtos/", impo
   .map((file) => file.replace(/\.json$/, ""))
   .sort();
 
-export const routes = ["/", "/produtos", ...productSlugs.map((slug) => `/produtos/${slug}`)];
+export const productRoutes = productSlugs.map((slug) => `/produtos/${slug}`);
+
+export const routes = ["/", "/produtos", "/pedido", "/contato", "/privacidade", ...productRoutes];
+
+/** Fora dos buscadores e do sitemap (src/config/site.ts). */
+export const noindexRoutes = ["/pedido"];
+
+export const indexableRoutes = routes.filter((route) => !noindexRoutes.includes(route));
+
+/** Únicas páginas com JavaScript: as que têm ilha React do pedido (ADR-0006). */
+export const islandRoutes = ["/pedido", ...productRoutes];
 
 export const orderPhone = "5511958877762";

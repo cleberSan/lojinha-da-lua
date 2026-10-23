@@ -58,6 +58,6 @@ const monthYear = new Intl.DateTimeFormat("pt-BR", {
 });
 
 /** "2026-10" → "outubro de 2026" */
-export function formatPricesAsOf(value: string): string {
+export function formatMonthYear(value: string): string {
   return monthYear.format(new Date(`${value}-01T00:00:00Z`));
 }

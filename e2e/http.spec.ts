@@ -1,5 +1,9 @@
+import { createHash } from "node:crypto";
 import { expect, test } from "@playwright/test";
-import { routes } from "./routes";
+import { islandRoutes, routes } from "./routes";
+
+const sha256 = (content: string) =>
+  `'sha256-${createHash("sha256").update(content).digest("base64")}'`;
 
 const expectedHeaders = {
   "content-security-policy":
@@ -29,10 +33,25 @@ for (const route of routes) {
     expect(policy).toMatch(/script-src 'self'( 'sha256-[A-Za-z0-9+/=]+')*;/);
     expect(policy).not.toMatch(/unsafe-(inline|eval)/);
 
-    // Nada inline que a CSP precisaria liberar: estilos e scripts vêm de arquivos.
-    expect(html).not.toMatch(/<script(?![^>]*\bsrc=)[^>]*>/);
+    // Script e estilo inline só os que o Astro gera para as ilhas, todos com hash na CSP.
+    // JSON-LD é dado, não código: o navegador não executa e a CSP não se aplica.
+    for (const [, attributes, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
+      if (/\bsrc=/.test(attributes!) || /type="application\/ld\+json"/.test(attributes!)) continue;
+      expect(policy, "script inline sem hash na CSP").toContain(sha256(body!));
+    }
+    for (const [, body] of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)) {
+      expect(policy, "estilo inline sem hash na CSP").toContain(sha256(body!));
+    }
     expect(html).not.toMatch(/\sstyle="/);
     expect(html).not.toMatch(/\son[a-z]+="/);
+
+    // Só as páginas com ilha do pedido carregam JavaScript.
+    const executable = /<script\b(?![^>]*type="application\/ld\+json")/;
+    if (islandRoutes.includes(route)) {
+      expect(html).toMatch(executable);
+    } else {
+      expect(html).not.toMatch(executable);
+    }
   });
 }
 
