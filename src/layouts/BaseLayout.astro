@@ -26,14 +26,14 @@ interface Props {
   description: string;
   /** Imagem da prévia do link (WhatsApp, Instagram, buscadores); padrão: a da marca. */
   image?: ShareImage | undefined;
-  /** Dados estruturados (schema.org) com URLs absolutas; só saem quando há SITE_URL. */
+  /** Dados estruturados (schema.org) com URLs absolutas; só saem quando o build tem endereço. */
   jsonLd?: readonly Record<string, unknown>[] | undefined;
 }
 
 const { title, description, image, jsonLd } = Astro.props;
 const fullTitle = title ? `${title} | ${store.name}` : `${store.name}: ${store.tagline}`;
 
-// SEO (ADR-0007): URLs absolutas só existem quando o build conhece o endereço (SITE_URL).
+// SEO (ADR-0007): URLs absolutas a partir do endereço do build (src/config/site.ts).
 const site = Astro.site;
 const path = publicPath(Astro.url.pathname);
 const indexable = isIndexable(path);

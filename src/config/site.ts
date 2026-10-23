@@ -1,9 +1,16 @@
 /**
- * Endereço público e indexação (ADR-0007).
+ * Endereço público e indexação (ADR-0007 e ADR-0008).
  *
- * O endereço vem da variável SITE_URL no build. Sem ela o site funciona igual, mas sai sem
- * canonical, sem URLs absolutas no Open Graph, sem JSON-LD e sem sitemap, que exigem URL
- * absoluta. Nos testes E2E ela aponta para o próprio `wrangler dev`.
+ * O endereço de produção fica aqui, revisado em PR como o resto do código. Canonical, URLs
+ * absolutas do Open Graph, JSON-LD e sitemap usam ele, inclusive nas prévias da Cloudflare,
+ * que apontam o canonical para o site oficial. O workflow "Site no ar" confere o mesmo
+ * endereço, e um teste garante que os dois batem.
+ */
+export const productionSiteUrl = "https://lojinha-da-lua.clebersan.workers.dev";
+
+/**
+ * Valida a variável SITE_URL, que troca o endereço no build dos testes E2E (o do
+ * `wrangler dev`). Só origem: https, ou http em 127.0.0.1 e localhost.
  */
 export function parseSiteUrl(value: string | undefined): URL | undefined {
   if (value === undefined || value.trim() === "") return undefined;
@@ -23,18 +30,21 @@ export function parseSiteUrl(value: string | undefined): URL | undefined {
 }
 
 /**
- * Endereço do site a partir das variáveis de ambiente do build. No build da Cloudflare
- * (Workers Builds define WORKERS_CI=1) a SITE_URL é obrigatória: sem ela a produção sairia
- * sem canonical, prévia de links e sitemap, e só um aviso no log mostraria isso.
+ * Endereço do site no build: o de produção, ou a SITE_URL quando definida. No build da
+ * Cloudflare (Workers Builds define WORKERS_CI=1), uma SITE_URL diferente do endereço de
+ * produção quebra o build, para uma variável esquecida no painel não desviar o canonical.
  */
-export function siteUrlFromEnv(env: Readonly<Record<string, string | undefined>>): URL | undefined {
-  const site = parseSiteUrl(env["SITE_URL"]);
-  if (site === undefined && env["WORKERS_CI"] === "1") {
+export function siteUrlFromEnv(env: Readonly<Record<string, string | undefined>>): URL {
+  const production = new URL(productionSiteUrl);
+  const override = parseSiteUrl(env["SITE_URL"]);
+  if (override === undefined) return production;
+
+  if (env["WORKERS_CI"] === "1" && override.origin !== production.origin) {
     throw new Error(
-      "SITE_URL precisa estar definida nas variáveis de build da Cloudflare (CONTRIBUTING.md)",
+      `SITE_URL do painel da Cloudflare (${override.origin}) difere do endereço em src/config/site.ts: apague a variável do painel (CONTRIBUTING.md)`,
     );
   }
-  return site;
+  return override;
 }
 
 /**

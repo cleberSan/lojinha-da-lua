@@ -29,7 +29,7 @@ Cada botão de pedido abre `wa.me` com a mensagem pronta (produto, variação, p
 - Catálogo validado por schema: preço, variação ou imagem fora do formato quebram o build. Um teste compara os preços com os flyers da loja.
 - CSP por hash sem `'unsafe-inline'`, HSTS e demais cabeçalhos de segurança, de uma fonte só ([ADR-0004](docs/adr/0004-csp-por-hash-e-cabecalhos.md)).
 - Testes de unidade com Vitest (mínimo de 80% de cobertura no CI) e E2E com Playwright em desktop e celular, com axe (WCAG 2.1 AA), sobre o build servido pelo mesmo runtime da Cloudflare.
-- Os mesmos testes E2E rodam todo dia contra o site publicado e abrem uma issue se algo mudar no ar; o build de produção falha sem o endereço configurado ([ADR-0008](docs/adr/0008-conferencia-do-site-no-ar.md)).
+- Os mesmos testes E2E rodam todo dia contra o site publicado e abrem uma issue se algo mudar no ar; o endereço de produção fica no código, sem variável no painel da Cloudflare ([ADR-0008](docs/adr/0008-conferencia-do-site-no-ar.md)).
 - CodeQL, revisão de dependências e Dependabot.
 
 ## Decisões

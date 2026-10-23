@@ -21,7 +21,7 @@ npm run preview        # serve dist/ como a Cloudflare, em http://127.0.0.1:8787
 npm run test:e2e       # sobe o preview e roda Playwright + axe (rode o build antes)
 ```
 
-Os testes E2E esperam o build feito com `SITE_URL=http://127.0.0.1:8787`, o endereço do preview: canonical, Open Graph, JSON-LD e sitemap apontam para ele ([ADR-0007](docs/adr/0007-seo-e-previa-de-links.md)). Sem a variável, o build funciona, mas sem esses metadados.
+Os testes E2E esperam o build feito com `SITE_URL=http://127.0.0.1:8787`, o endereço do preview: canonical, Open Graph, JSON-LD e sitemap apontam para ele ([ADR-0007](docs/adr/0007-seo-e-previa-de-links.md)). Sem a variável, o build usa o endereço de produção (`productionSiteUrl` em `src/config/site.ts`), e os testes de SEO falham.
 
 Antes do primeiro `test:e2e`, instale o navegador com `npx playwright install chromium`. Se a máquina já tiver um Chromium compatível, aponte para ele com `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
@@ -57,7 +57,7 @@ Configuração inicial, feita uma vez pelo dono do repositório (já feita em 20
 3. Na página inicial da conta, **Create app** → importar repositório do GitHub. Ao instalar o app da Cloudflare, escolha **Only select repositories** e marque só `lojinha-da-lua`.
 4. Use o nome `lojinha-da-lua` (o mesmo de `wrangler.jsonc`), build command `npm run build` e os comandos de deploy e prévia padrão. Deixe **Protect with Cloudflare Access** desligado: o site é público.
 5. Se o subdomínio `workers.dev` da conta vier derivado do e-mail, troque por um nome público em **Compute → Workers & Pages → Subdomain → Change**: ele aparece em todo link do site.
-6. Crie a variável de build `SITE_URL` com o endereço `https://lojinha-da-lua.<subdomínio>.workers.dev` em **Settings → Build → Build variables and secrets** do Worker, como texto (não é sigilosa). Não confunda com **Settings → Variables & Secrets**, que vale só em tempo de execução. Sem ela, o build da Cloudflare falha de propósito. Refaça o build depois de criar.
-7. Se o endereço mudar (domínio próprio, por exemplo), troque a `SITE_URL` e o `E2E_BASE_URL` de `.github/workflows/producao.yml` juntos.
+6. O build da Cloudflare não precisa de variável: o endereço fica em `productionSiteUrl` (`src/config/site.ts`), também para as prévias dos PRs. Se existir uma `SITE_URL` em **Settings → Builds → Variables and secrets** do Worker (abas **Production** ou **Previews Base**), apague: com valor diferente do código, o build falha de propósito ([ADR-0008](docs/adr/0008-conferencia-do-site-no-ar.md)).
+7. Se o endereço mudar (domínio próprio, por exemplo), troque `productionSiteUrl` e o `E2E_BASE_URL` de `.github/workflows/producao.yml` no mesmo PR; um teste unitário confere que os dois batem.
 
 Nenhum token da Cloudflare deve ser guardado no repositório nem nos secrets do GitHub.

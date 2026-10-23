@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # Mesmo valor da variável de build SITE_URL na Cloudflare (CONTRIBUTING.md).
+  # Mesmo endereço de productionSiteUrl em src/config/site.ts; um teste unitário confere.
   E2E_BASE_URL: https://lojinha-da-lua.clebersan.workers.dev
 
 jobs:
