@@ -1,0 +1,113 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/marca/logo.png";
+import { orderContact, store } from "../config/store";
+import WhatsAppButton from "./WhatsAppButton.astro";
+
+const currentPath = Astro.url.pathname;
+const links = [
+  { href: "/produtos", label: "Produtos" },
+  { href: "/produtos#camisetas", label: "Camisetas" },
+  { href: "/produtos#canecas", label: "Canecas" },
+];
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href="/" aria-label={`${store.name}, página inicial`}>
+      <Image src={logo} alt="" width={52} height={52} loading="eager" />
+      <span>{store.name}</span>
+    </a>
+    <nav aria-label="Principal">
+      <ul>
+        {links.map((link) => (
+          <li>
+            <a href={link.href} aria-current={link.href === currentPath ? "page" : undefined}>
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <WhatsAppButton phone={orderContact.phone} label="WhatsApp" size="small" class="cta" />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid rgb(138 242 252 / 0.18);
+    background: rgb(4 8 36 / 0.55);
+    backdrop-filter: blur(8px);
+  }
+
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    padding-block: 0.75rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--text);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.4rem;
+  }
+
+  .brand :global(img) {
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgb(138 242 252 / 0.5);
+  }
+
+  nav {
+    margin-left: auto;
+  }
+
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+    padding-block: 0.4rem;
+    border-bottom: 2px solid transparent;
+  }
+
+  nav a:hover,
+  nav a[aria-current="page"] {
+    border-bottom-color: var(--cyan-400);
+  }
+
+  @media (max-width: 40rem) {
+    .brand {
+      font-size: 1.2rem;
+      gap: 0.5rem;
+    }
+
+    .brand :global(img) {
+      width: 40px;
+    }
+
+    nav {
+      order: 3;
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .bar :global(.cta) {
+      margin-left: auto;
+    }
+  }
+</style>

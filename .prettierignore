@@ -1,0 +1,10 @@
+dist
+.astro
+coverage
+test-results
+playwright-report
+blob-report
+.wrangler
+package-lock.json
+# Ilustrações geradas por script e mantidas como estão.
+src/assets/**/*.svg

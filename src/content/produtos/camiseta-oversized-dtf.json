@@ -1,0 +1,23 @@
+{
+  "name": "Camiseta oversized em DTF",
+  "category": "camisetas",
+  "technique": "DTF",
+  "summary": "Camiseta oversized com estampa em DTF no tamanho A4 ou A3.",
+  "image": {
+    "src": "../../assets/produtos/camiseta-oversized-dtf.svg",
+    "alt": "Ilustração de uma camiseta oversized preta com uma lua crescente estampada no peito",
+    "kind": "ilustracao"
+  },
+  "variants": [
+    {
+      "label": "Estampa A4",
+      "priceCents": 7000
+    },
+    {
+      "label": "Estampa A3",
+      "priceCents": 8000
+    }
+  ],
+  "notes": ["Arte minimalista de até 10 cm na frente ou nas costas vem de brinde."],
+  "order": 3
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Caneca comum",
+  "category": "canecas",
+  "summary": "Caneca branca personalizada com a arte que você escolher.",
+  "image": {
+    "src": "../../assets/produtos/caneca-comum.svg",
+    "alt": "Ilustração de uma caneca branca com uma lua crescente estampada",
+    "kind": "ilustracao"
+  },
+  "variants": [
+    {
+      "label": "Unidade",
+      "priceCents": 3500
+    }
+  ],
+  "notes": ["A arte vem de brinde."],
+  "order": 1
+}

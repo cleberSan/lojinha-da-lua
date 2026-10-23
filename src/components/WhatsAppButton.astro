@@ -1,0 +1,23 @@
+---
+import { buildWhatsAppUrl } from "../domain/whatsapp";
+import ExternalLink from "./ExternalLink.astro";
+import Icon from "./Icon.astro";
+
+interface Props {
+  phone: string;
+  message?: string;
+  label: string;
+  size?: "normal" | "small";
+  class?: string;
+}
+
+const { phone, message = "", label, size = "normal", class: className } = Astro.props;
+---
+
+<ExternalLink
+  href={buildWhatsAppUrl(phone, message)}
+  class:list={["button", "button-whatsapp", size === "small" && "button-small", className]}
+>
+  <Icon name="whatsapp" size={size === "small" ? 18 : 22} />
+  {label}
+</ExternalLink>

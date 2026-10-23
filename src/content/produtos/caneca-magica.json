@@ -1,0 +1,18 @@
+{
+  "name": "Caneca mágica",
+  "category": "canecas",
+  "summary": "Caneca preta que revela a estampa quando recebe bebida quente.",
+  "image": {
+    "src": "../../assets/produtos/caneca-magica.svg",
+    "alt": "Ilustração de uma caneca preta soltando vapor, com a estampa ainda escondida",
+    "kind": "ilustracao"
+  },
+  "variants": [
+    {
+      "label": "Unidade",
+      "priceCents": 5000
+    }
+  ],
+  "notes": ["A arte vem de brinde."],
+  "order": 4
+}

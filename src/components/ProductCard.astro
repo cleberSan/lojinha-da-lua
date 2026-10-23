@@ -1,0 +1,110 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { hasSinglePrice, startingPriceCents } from "../domain/catalog";
+import { formatBRL } from "../domain/money";
+import ProductImage from "./ProductImage.astro";
+
+interface Props {
+  product: CollectionEntry<"products">;
+  headingLevel?: "h2" | "h3";
+}
+
+const { product, headingLevel: Heading = "h3" } = Astro.props;
+const { name, technique, image } = product.data;
+const price = formatBRL(startingPriceCents(product));
+---
+
+<article class="product-card">
+  <ProductImage
+    src={image.src}
+    alt={image.alt}
+    kind={image.kind}
+    sizes="(min-width: 72rem) 17rem, (min-width: 40rem) 45vw, 92vw"
+  />
+  <div class="body">
+    {technique && <p class="technique">{technique}</p>}
+    <Heading class="name">
+      {/* O link cobre o card inteiro (::after), mas o texto acessível continua sendo só o nome. */}
+      <a href={`/produtos/${product.id}`}>{name}</a>
+    </Heading>
+    <p class="from">
+      {hasSinglePrice(product) ? "" : "a partir de "}
+      <span class="price">{price}</span>
+    </p>
+  </div>
+</article>
+
+<style>
+  .product-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius-card) + 0.75rem);
+    background: var(--surface);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .product-card:hover,
+  .product-card:focus-within {
+    box-shadow: var(--glow);
+    transform: translateY(-2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product-card {
+      transition: none;
+    }
+    .product-card:hover,
+    .product-card:focus-within {
+      transform: none;
+    }
+  }
+
+  .body {
+    padding: 0.9rem 0.5rem 0.4rem;
+  }
+
+  .technique {
+    margin: 0 0 0.2rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cyan-300);
+  }
+
+  .name {
+    font-size: 1.45rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .name a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .name a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .name a:focus-visible {
+    outline: none;
+  }
+
+  .from {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  .from .price {
+    font-size: 1.35rem;
+  }
+</style>

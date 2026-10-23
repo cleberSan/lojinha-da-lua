@@ -1,0 +1,26 @@
+{
+  "name": "Camiseta em sublimação",
+  "category": "camisetas",
+  "technique": "Sublimação",
+  "summary": "Camiseta de poliéster com a sua arte em tamanho A4 na frente, nas costas ou nos dois lados.",
+  "image": {
+    "src": "../../assets/produtos/camiseta-sublimacao.png",
+    "alt": "Camiseta branca com um retângulo tamanho A4 escrito \"Sua arte aqui\" no peito",
+    "kind": "foto"
+  },
+  "variants": [
+    {
+      "label": "Frente ou costas",
+      "priceCents": 4000
+    },
+    {
+      "label": "Frente e costas",
+      "priceCents": 5000
+    }
+  ],
+  "notes": [
+    "Sublimação somente em camisetas de poliéster, em qualquer cor, exceto preta.",
+    "A arte vem de brinde."
+  ],
+  "order": 1
+}

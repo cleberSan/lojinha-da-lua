@@ -1,0 +1,23 @@
+{
+  "name": "Camiseta em DTF",
+  "category": "camisetas",
+  "technique": "DTF",
+  "summary": "Camiseta com estampa em DTF no tamanho A4 ou A3.",
+  "image": {
+    "src": "../../assets/produtos/camiseta-dtf.svg",
+    "alt": "Ilustração de uma camiseta preta com uma lua crescente estampada no peito",
+    "kind": "ilustracao"
+  },
+  "variants": [
+    {
+      "label": "Estampa A4",
+      "priceCents": 6000
+    },
+    {
+      "label": "Estampa A3",
+      "priceCents": 7000
+    }
+  ],
+  "notes": ["Arte minimalista de até 10 cm na frente ou nas costas vem de brinde."],
+  "order": 2
+}
