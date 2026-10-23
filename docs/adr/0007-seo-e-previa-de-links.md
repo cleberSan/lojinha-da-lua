@@ -23,6 +23,6 @@ O público chega pelo Instagram e por links enviados no WhatsApp. A prévia do l
 
 ## Consequências
 
-- Depois de conectar a Cloudflare, `SITE_URL` precisa ser definida nas variáveis de build do Worker (CONTRIBUTING.md). Até lá, produção sai sem canonical e sem sitemap, e o build avisa no log.
+- `SITE_URL` fica nas variáveis de build do Worker (CONTRIBUTING.md). Fora da Cloudflare, sem ela o build só avisa no log; no build da Cloudflare (`WORKERS_CI=1`) ele falha, para a produção nunca sair sem canonical e sitemap ([ADR-0008](0008-conferencia-do-site-no-ar.md)).
 - O CI e os testes E2E constroem com `SITE_URL=http://127.0.0.1:8787`, o endereço do `wrangler dev`, e conferem canonical, Open Graph, JSON-LD, preços do JSON-LD contra o catálogo, robots.txt e sitemap.
 - Os dados estruturados não prometem resultado enriquecido no Google: ele também pede avaliações, frete ou devolução, que a loja não publica.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isIndexable, noindexPaths, parseSiteUrl, publicPath } from "./site";
+import { isIndexable, noindexPaths, parseSiteUrl, publicPath, siteUrlFromEnv } from "./site";
 
 describe("parseSiteUrl", () => {
   it("aceita a origem em https", () => {
@@ -29,6 +29,34 @@ describe("parseSiteUrl", () => {
     ["credenciais", "https://user:senha@lojinhadalua.com.br"],
   ])("recusa %s", (_case, value) => {
     expect(() => parseSiteUrl(value)).toThrow(/SITE_URL/);
+  });
+});
+
+describe("siteUrlFromEnv", () => {
+  const production = "https://lojinha-da-lua.exemplo.workers.dev";
+
+  it("usa a SITE_URL quando ela existe, com ou sem build da Cloudflare", () => {
+    expect(siteUrlFromEnv({ SITE_URL: production })?.origin).toBe(production);
+    expect(siteUrlFromEnv({ SITE_URL: production, WORKERS_CI: "1" })?.origin).toBe(production);
+  });
+
+  it("fora da Cloudflare, sem SITE_URL, segue sem endereço", () => {
+    expect(siteUrlFromEnv({})).toBeUndefined();
+    expect(siteUrlFromEnv({ WORKERS_CI: "0" })).toBeUndefined();
+  });
+
+  it.each([{}, { SITE_URL: "" }, { SITE_URL: "  " }])(
+    "no build da Cloudflare, SITE_URL ausente ou vazia (%j) quebra o build",
+    (env) => {
+      expect(() => siteUrlFromEnv({ ...env, WORKERS_CI: "1" })).toThrow(/SITE_URL precisa/);
+    },
+  );
+
+  it("valor inválido quebra o build em qualquer ambiente", () => {
+    expect(() => siteUrlFromEnv({ SITE_URL: "http://lojinha.com.br" })).toThrow(/https/);
+    expect(() => siteUrlFromEnv({ SITE_URL: "http://lojinha.com.br", WORKERS_CI: "1" })).toThrow(
+      /https/,
+    );
   });
 });
 

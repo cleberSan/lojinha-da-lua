@@ -23,6 +23,21 @@ export function parseSiteUrl(value: string | undefined): URL | undefined {
 }
 
 /**
+ * Endereço do site a partir das variáveis de ambiente do build. No build da Cloudflare
+ * (Workers Builds define WORKERS_CI=1) a SITE_URL é obrigatória: sem ela a produção sairia
+ * sem canonical, prévia de links e sitemap, e só um aviso no log mostraria isso.
+ */
+export function siteUrlFromEnv(env: Readonly<Record<string, string | undefined>>): URL | undefined {
+  const site = parseSiteUrl(env["SITE_URL"]);
+  if (site === undefined && env["WORKERS_CI"] === "1") {
+    throw new Error(
+      "SITE_URL precisa estar definida nas variáveis de build da Cloudflare (CONTRIBUTING.md)",
+    );
+  }
+  return site;
+}
+
+/**
  * Páginas fora dos buscadores: o pedido é pessoal de cada aparelho e o 404 não é conteúdo.
  * Recebem `<meta name="robots" content="noindex">` e ficam fora do sitemap.
  */

@@ -3,10 +3,10 @@ import { writeFile } from "node:fs/promises";
 import react from "@astrojs/react";
 import { defineConfig } from "astro/config";
 import { metaCspDirectives, renderHeadersFile } from "./src/config/security.ts";
-import { isIndexable, parseSiteUrl, publicPath } from "./src/config/site.ts";
+import { isIndexable, publicPath, siteUrlFromEnv } from "./src/config/site.ts";
 import { renderRobots, renderSitemap } from "./src/domain/seo.ts";
 
-const site = parseSiteUrl(process.env.SITE_URL);
+const site = siteUrlFromEnv(process.env);
 
 /** Grava dist/_headers a partir de src/config/security.ts, a única fonte dos cabeçalhos. */
 function cloudflareHeaders() {

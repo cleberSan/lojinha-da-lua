@@ -25,6 +25,12 @@ Os testes E2E esperam o build feito com `SITE_URL=http://127.0.0.1:8787`, o ende
 
 Antes do primeiro `test:e2e`, instale o navegador com `npx playwright install chromium`. Se a máquina já tiver um Chromium compatível, aponte para ele com `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
+Para conferir o site publicado com a mesma suíte, sem build nem servidor local ([ADR-0008](docs/adr/0008-conferencia-do-site-no-ar.md)):
+
+```bash
+E2E_BASE_URL=https://lojinha-da-lua.clebersan.workers.dev npm run test:e2e
+```
+
 ## Mudar preço, texto ou produto
 
 Tudo que a loja publica vem dela: não invente preço, prazo, forma de pagamento nem descrição.
@@ -38,16 +44,20 @@ Tudo que a loja publica vem dela: não invente preço, prazo, forma de pagamento
 
 O site é publicado na Cloudflare como arquivos estáticos de um Worker, pela integração da própria Cloudflare com o GitHub ([ADR-0002](docs/adr/0002-hospedagem-na-cloudflare.md)):
 
-- Merge no `main` publica em produção.
+- Endereço: <https://lojinha-da-lua.clebersan.workers.dev>.
+- Merge no `main` publica em produção. PRs de outras branches ganham um link de prévia no check da Cloudflare.
 - Para voltar uma versão, use **Deployments** no painel do Worker.
 - Os cabeçalhos HTTP vêm de `dist/_headers`, gerado no build a partir de `src/config/security.ts`.
+- Todo dia o workflow **Site no ar** roda os testes E2E contra a produção e abre uma issue se falhar. Depois de um deploy importante, dispare à mão em **Actions → Site no ar → Run workflow** ([ADR-0008](docs/adr/0008-conferencia-do-site-no-ar.md)).
 
-Configuração inicial, feita uma vez pelo dono do repositório:
+Configuração inicial, feita uma vez pelo dono do repositório (já feita em 2026-10-23):
 
-1. Crie uma conta gratuita em [dash.cloudflare.com](https://dash.cloudflare.com/sign-up). Não é preciso cartão.
-2. Em **Workers & Pages → Create → Import a repository**, conecte o GitHub. Ao instalar o app da Cloudflare, escolha **Only select repositories** e marque só `lojinha-da-lua`.
-3. Use o nome `lojinha-da-lua` (o mesmo de `wrangler.jsonc`), build command `npm run build` e deixe o deploy command padrão (`npx wrangler deploy`).
-4. Depois do primeiro deploy, copie o endereço `https://lojinha-da-lua.<sua-conta>.workers.dev` e crie a variável de build `SITE_URL` com ele em **Settings → Build → Build variables and secrets** (como variável, não como secret: não é sigiloso; não confunda com **Settings → Variables & Secrets**, que vale só em tempo de execução). Faça um novo deploy para o site sair com canonical, prévia de links e sitemap.
-5. No GitHub, em **Settings → Branches**, proteja o `main` exigindo PR e os checks `Lint, tipos, testes e build`, `Revisão de dependências` e `CodeQL`. A Cloudflare publica tudo que chega ao `main`, então é essa regra que garante que só código testado vai ao ar.
+1. Em **Settings → Branches** do GitHub, proteja o `main` exigindo PR, sem aprovação obrigatória (o autor não aprova o próprio PR), e os checks `Lint, tipos, testes e build`, `Revisão de dependências` e `CodeQL`, sem permitir bypass. A Cloudflare publica tudo que chega ao `main`, então é essa regra que garante que só código testado vai ao ar.
+2. Crie uma conta gratuita em [dash.cloudflare.com](https://dash.cloudflare.com/sign-up), sem cartão, com verificação em duas etapas (entrando pelo GitHub, vale a do GitHub).
+3. Na página inicial da conta, **Create app** → importar repositório do GitHub. Ao instalar o app da Cloudflare, escolha **Only select repositories** e marque só `lojinha-da-lua`.
+4. Use o nome `lojinha-da-lua` (o mesmo de `wrangler.jsonc`), build command `npm run build` e os comandos de deploy e prévia padrão. Deixe **Protect with Cloudflare Access** desligado: o site é público.
+5. Se o subdomínio `workers.dev` da conta vier derivado do e-mail, troque por um nome público em **Compute → Workers & Pages → Subdomain → Change**: ele aparece em todo link do site.
+6. Crie a variável de build `SITE_URL` com o endereço `https://lojinha-da-lua.<subdomínio>.workers.dev` em **Settings → Build → Build variables and secrets** do Worker, como texto (não é sigilosa). Não confunda com **Settings → Variables & Secrets**, que vale só em tempo de execução. Sem ela, o build da Cloudflare falha de propósito. Refaça o build depois de criar.
+7. Se o endereço mudar (domínio próprio, por exemplo), troque a `SITE_URL` e o `E2E_BASE_URL` de `.github/workflows/producao.yml` juntos.
 
 Nenhum token da Cloudflare deve ser guardado no repositório nem nos secrets do GitHub.

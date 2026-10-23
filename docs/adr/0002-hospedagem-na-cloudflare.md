@@ -21,6 +21,8 @@ Publicar `dist/` como arquivos estáticos de um Worker da Cloudflare (`wrangler.
 - **URLs sem barra final:** o Astro gera `produtos.html` (`build.format: "file"`) e a Cloudflare serve `/produtos`; `/produtos/` redireciona para `/produtos`.
 - **Portão de qualidade:** a Cloudflare publica o que chega ao `main`, então o `main` fica protegido exigindo PR e os checks de CI, revisão de dependências e CodeQL.
 - **Rollback:** voltar para a versão anterior em Deployments, no painel do Worker.
+- **Endereço:** `https://lojinha-da-lua.clebersan.workers.dev`, com `workers_dev` e `preview_urls` ligados no `wrangler.jsonc`. O subdomínio da conta foi trocado do padrão, derivado do e-mail, para o usuário público do GitHub, porque ele aparece em todo link compartilhado.
+- **Prévia por PR:** os builds de outras branches (Preview builds) geram um link de prévia por versão, para revisar no celular antes do merge. Esses links são públicos, como o código do repositório, e o canonical deles aponta para a produção.
 
 ## Alternativas
 
@@ -30,6 +32,6 @@ Publicar `dist/` como arquivos estáticos de um Worker da Cloudflare (`wrangler.
 
 ## Consequências
 
-- Sem servidor, não há logs de aplicação para monitorar; a verificação do site no ar vira um teste agendado (PR de produção).
+- Sem servidor, não há logs de aplicação para monitorar; a verificação do site no ar é um teste agendado ([ADR-0008](0008-conferencia-do-site-no-ar.md)).
 - Se o site precisar de código no servidor, as requisições a esse código passam a contar no limite gratuito (100 mil por dia), e este ADR deve ser revisto.
 - O ideal é a conta da Cloudflare e o domínio próprio ficarem em nome da loja, com o autor como membro.
