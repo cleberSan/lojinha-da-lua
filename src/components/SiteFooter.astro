@@ -1,0 +1,92 @@
+---
+import { formatPricesAsOf, store } from "../config/store";
+import { formatBrazilianMobile } from "../domain/phone";
+import { buildWhatsAppUrl } from "../domain/whatsapp";
+import ExternalLink from "./ExternalLink.astro";
+import Icon from "./Icon.astro";
+---
+
+<footer class="site-footer">
+  <div class="container grid">
+    <section aria-labelledby="footer-store">
+      <h2 id="footer-store">{store.name}</h2>
+      <p class="muted">{store.tagline}</p>
+      <p class="muted small">
+        Preços de referência de {formatPricesAsOf(store.pricesAsOf)}. O valor final é confirmado no
+        WhatsApp.
+      </p>
+    </section>
+    <section aria-labelledby="footer-contact">
+      <h2 id="footer-contact">Contato</h2>
+      <ul>
+        {store.whatsapp.map((contact) => (
+          <li>
+            <ExternalLink href={buildWhatsAppUrl(contact.phone, "")}>
+              <Icon name="whatsapp" size={18} />
+              <span>
+                {contact.label}: {formatBrazilianMobile(contact.phone)}
+              </span>
+            </ExternalLink>
+          </li>
+        ))}
+        <li>
+          <ExternalLink href={store.instagram.url}>
+            <Icon name="instagram" size={18} />
+            <span>@{store.instagram.handle}</span>
+          </ExternalLink>
+        </li>
+      </ul>
+    </section>
+  </div>
+  <p class="container credit small muted">
+    Site feito por{" "}
+    <ExternalLink href="https://github.com/cleberSan/lojinha-da-lua">
+      Cleber Costa Santos
+    </ExternalLink>
+    .
+  </p>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: auto;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgb(138 242 252 / 0.18);
+    background: rgb(4 8 36 / 0.6);
+  }
+
+  .grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  ul {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  ul a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+  }
+
+  .small {
+    font-size: 0.95rem;
+  }
+
+  .credit {
+    margin-top: 2rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid rgb(138 242 252 / 0.12);
+  }
+</style>

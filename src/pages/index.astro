@@ -1,0 +1,286 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import logo from "../assets/marca/logo.png";
+import Icon from "../components/Icon.astro";
+import ProductCard from "../components/ProductCard.astro";
+import ProductImage from "../components/ProductImage.astro";
+import WhatsAppButton from "../components/WhatsAppButton.astro";
+import ExternalLink from "../components/ExternalLink.astro";
+import { orderContact, store } from "../config/store";
+import { groupByCategory, startingPriceCents } from "../domain/catalog";
+import { formatBRL } from "../domain/money";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const groups = groupByCategory(await getCollection("products"));
+const highlights = groups.flatMap((group) => group.products.slice(0, 2));
+const categoryCards = groups.map((group) => ({
+  ...group,
+  cover: group.products[0]!.data.image,
+  fromCents: Math.min(...group.products.map(startingPriceCents)),
+}));
+
+const steps = [
+  {
+    title: "Escolha o produto",
+    text: "Veja os modelos, os tamanhos de estampa e os preços no catálogo.",
+  },
+  {
+    title: "Mande a sua ideia",
+    text: "Envie a imagem ou a ideia da estampa. A arte vem de brinde, nas condições de cada produto.",
+  },
+  {
+    title: "Feche pelo WhatsApp",
+    text: "O botão de pedido abre o WhatsApp com a mensagem pronta. Valor final, prazo e entrega são combinados na conversa.",
+  },
+];
+---
+
+<BaseLayout description={store.description}>
+  <section class="hero container section" aria-labelledby="titulo">
+    <div class="hero-text">
+      <p class="pill">Personalizados</p>
+      <h1 id="titulo">{store.tagline}</h1>
+      <p class="lead">{store.description}</p>
+      <div class="actions">
+        <a class="button button-primary" href="/produtos">
+          Ver produtos <Icon name="arrow-right" size={20} />
+        </a>
+        <WhatsAppButton phone={orderContact.phone} label="Pedir pelo WhatsApp" />
+      </div>
+      <ul class="pill-list techniques" aria-label="Destaques da loja">
+        <li class="pill">Sublimação</li>
+        <li class="pill">DTF</li>
+        <li class="pill">A arte vem de brinde</li>
+      </ul>
+    </div>
+    <div class="hero-logo">
+      <Image
+        src={logo}
+        alt={`Logo da ${store.name}: lua crescente com planeta e estrelas`}
+        width={314}
+        height={314}
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  </section>
+
+  <section class="container section" aria-labelledby="categorias">
+    <h2 id="categorias">Categorias</h2>
+    <ul class="categories">
+      {categoryCards.map((category) => (
+        <li>
+          <a class="category" href={`/produtos#${category.id}`}>
+            <ProductImage
+              src={category.cover.src}
+              alt=""
+              kind={category.cover.kind}
+              sizes="(min-width: 40rem) 12rem, 40vw"
+            />
+            <span class="category-text">
+              <span class="category-name">{category.name}</span>
+              <span class="muted">
+                {category.products.length} modelos, a partir de{" "}
+                <span class="price">{formatBRL(category.fromCents)}</span>
+              </span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="container section" aria-labelledby="destaques">
+    <div class="section-head">
+      <h2 id="destaques">Alguns produtos</h2>
+      <a href="/produtos">Ver todos os produtos</a>
+    </div>
+    <ul class="card-grid">
+      {highlights.map((product) => (
+        <li>
+          <ProductCard product={product} />
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="container section" aria-labelledby="como-funciona">
+    <h2 id="como-funciona">Como funciona</h2>
+    <ol class="steps">
+      {steps.map((step) => (
+        <li>
+          <h3>{step.title}</h3>
+          <p class="muted">{step.text}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="container section" aria-labelledby="contato">
+    <div class="contact">
+      <h2 id="contato">Entre em contato e faça seus pedidos</h2>
+      <p class="lead">Estamos abertos para qualquer dúvida!</p>
+      <div class="actions">
+        <WhatsAppButton phone={orderContact.phone} label="Chamar no WhatsApp" />
+        <ExternalLink class="button button-ghost" href={store.instagram.url}>
+          <Icon name="instagram" /> @{store.instagram.handle}
+        </ExternalLink>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  }
+
+  .hero-text .pill {
+    margin: 0 0 1.25rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-block: 1.75rem;
+  }
+
+  .techniques .pill {
+    font-size: 0.95rem;
+  }
+
+  .hero-logo {
+    justify-self: center;
+    width: min(100%, 22rem);
+  }
+
+  .hero-logo :global(img) {
+    width: 100%;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 3px rgb(138 242 252 / 0.55),
+      0 0 60px rgb(34 227 245 / 0.35);
+  }
+
+  @media (max-width: 52rem) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-logo {
+      grid-row: 1;
+      width: min(70%, 16rem);
+    }
+  }
+
+  .categories {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .category {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    gap: 1.25rem;
+    align-items: center;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: calc(var(--radius-card) + 0.75rem);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .category:hover {
+    box-shadow: var(--glow);
+  }
+
+  .category :global(.badge) {
+    display: none;
+  }
+
+  .category-text {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .category-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.9rem;
+  }
+
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-head h2 {
+    margin: 0;
+  }
+
+  .steps {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+
+  .steps li {
+    counter-increment: step;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+  }
+
+  .steps li::before {
+    content: counter(step);
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    border: 2px solid var(--cyan-400);
+    box-shadow: 0 0 14px rgb(34 227 245 / 0.35);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--cyan-400);
+  }
+
+  .steps p {
+    margin: 0;
+  }
+
+  .contact {
+    padding: clamp(1.5rem, 5vw, 3rem);
+    border: 2px solid var(--cyan-400);
+    border-radius: calc(var(--radius-card) + 0.5rem);
+    background:
+      radial-gradient(40rem 20rem at 100% 0%, rgb(34 227 245 / 0.18), transparent 70%),
+      rgb(10 17 69 / 0.75);
+    box-shadow: 0 0 30px rgb(34 227 245 / 0.25);
+  }
+
+  .contact .actions {
+    margin-bottom: 0;
+  }
+</style>

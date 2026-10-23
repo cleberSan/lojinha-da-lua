@@ -1,0 +1,42 @@
+---
+/** Ícones decorativos desenhados para o site (sem marca registrada de terceiros). */
+interface Props {
+  name: "whatsapp" | "instagram" | "arrow-right";
+  size?: number;
+}
+
+const { name, size = 22 } = Astro.props;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  {name === "whatsapp" && (
+    <>
+      <path d="M12 2.5a9.5 9.5 0 0 0-8.2 14.3L2.5 21.5l4.8-1.2A9.5 9.5 0 1 0 12 2.5z" />
+      <path
+        fill="currentColor"
+        stroke="none"
+        d="M8.6 7.4c.3-.6.9-.6 1.2 0l.9 1.8c.2.4.1.8-.2 1.1l-.6.6c.6 1.3 1.6 2.3 2.9 2.9l.6-.6c.3-.3.7-.4 1.1-.2l1.8.9c.6.3.6.9 0 1.2-1 .7-2.2.9-3.3.4a9.5 9.5 0 0 1-4.8-4.8c-.5-1.1-.3-2.3.3-3.3z"
+      />
+    </>
+  )}
+  {name === "instagram" && (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </>
+  )}
+  {name === "arrow-right" && <path d="M5 12h14M13 6l6 6-6 6" />}
+</svg>

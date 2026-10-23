@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+/**
+ * Link para fora do site (WhatsApp, Instagram): abre em outra aba sem dar à página aberta
+ * acesso a esta (noopener) nem informar de onde o visitante veio (noreferrer).
+ */
+type Props = Omit<HTMLAttributes<"a">, "target" | "rel"> & { href: string };
+
+const { href, ...attributes } = Astro.props;
+const url = new URL(href);
+if (url.protocol !== "https:") {
+  throw new Error(`Link externo precisa ser https: ${href}`);
+}
+---
+
+<a href={url.toString()} target="_blank" rel="noopener noreferrer" {...attributes}>
+  <slot />
+  <span class="visually-hidden"> (abre em outra aba)</span>
+</a>

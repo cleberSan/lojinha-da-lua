@@ -1,0 +1,38 @@
+---
+import Icon from "../components/Icon.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Página não encontrada" description="Esta página não existe na Lojinha Da Lua.">
+  <div class="container section not-found">
+    <p class="pill">Erro 404</p>
+    <h1>Essa página sumiu no espaço</h1>
+    <p class="lead">O endereço pode ter mudado ou estar digitado errado.</p>
+    <div class="actions">
+      <a class="button button-primary" href="/produtos">
+        Ver produtos <Icon name="arrow-right" size={20} />
+      </a>
+      <a class="button button-ghost" href="/">
+        Ir para o início
+      </a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    text-align: center;
+  }
+
+  .not-found .lead {
+    margin-inline: auto;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.9rem;
+    margin-top: 1.5rem;
+  }
+</style>

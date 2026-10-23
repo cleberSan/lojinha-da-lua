@@ -1,0 +1,216 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+import ProductCard from "../../components/ProductCard.astro";
+import ProductImage from "../../components/ProductImage.astro";
+import WhatsAppButton from "../../components/WhatsAppButton.astro";
+import { formatPricesAsOf, orderContact, store } from "../../config/store";
+import { categories, relatedProducts } from "../../domain/catalog";
+import { formatBRL } from "../../domain/money";
+import { buildOrderMessage } from "../../domain/whatsapp";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export const getStaticPaths = (async () => {
+  const products = await getCollection("products");
+  return products.map((product) => ({
+    params: { slug: product.id },
+    props: { product, products },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  product: CollectionEntry<"products">;
+  products: CollectionEntry<"products">[];
+}
+
+const { product, products } = Astro.props;
+const { name, category, technique, summary, image, variants, notes } = product.data;
+const singleVariant = variants.length === 1;
+
+const offers = variants.map((variant) => ({
+  ...variant,
+  price: formatBRL(variant.priceCents),
+  message: buildOrderMessage(store.name, [
+    {
+      productName: name,
+      variantLabel: singleVariant ? undefined : variant.label,
+      unitPriceCents: variant.priceCents,
+      quantity: 1,
+    },
+  ]),
+}));
+const related = relatedProducts(products, product);
+---
+
+<BaseLayout title={name} description={summary}>
+  <div class="container section">
+    <nav aria-label="Trilha de navegação" class="breadcrumb">
+      <ol>
+        <li>
+          <a href="/">Início</a>
+        </li>
+        <li>
+          <a href={`/produtos#${category}`}>{categories[category].name}</a>
+        </li>
+        <li aria-current="page">{name}</li>
+      </ol>
+    </nav>
+
+    <article class="product">
+      <ProductImage
+        src={image.src}
+        alt={image.alt}
+        kind={image.kind}
+        sizes="(min-width: 52rem) 30rem, 92vw"
+        loading="eager"
+        showCaption
+      />
+      <div class="info">
+        {technique && <p class="pill">{technique}</p>}
+        <h1>{name}</h1>
+        <p class="lead">{summary}</p>
+
+        <h2 class="visually-hidden">Opções e preços</h2>
+        <ul class="offers">
+          {offers.map((offer) => (
+            <li class="offer">
+              <span class="offer-label">{singleVariant ? "Preço" : offer.label}</span>
+              <span class="price">{offer.price}</span>
+              <WhatsAppButton
+                phone={orderContact.phone}
+                message={offer.message}
+                label={singleVariant ? "Pedir" : `Pedir ${offer.label}`}
+                size="small"
+              />
+            </li>
+          ))}
+        </ul>
+
+        {notes.length > 0 && (
+          <ul class="notes">
+            {notes.map((note) => (
+              <li>{note}</li>
+            ))}
+          </ul>
+        )}
+        <p class="muted small">
+          Valores de referência de {formatPricesAsOf(store.pricesAsOf)}. O pedido abre o WhatsApp
+          com a mensagem pronta, e o valor final é confirmado na conversa.
+        </p>
+      </div>
+    </article>
+
+    {related.length > 0 && (
+      <section class="related" aria-labelledby="relacionados">
+        <h2 id="relacionados">Mais {categories[category].name.toLowerCase()}</h2>
+        <ul class="card-grid">
+          {related.map((item) => (
+            <li>
+              <ProductCard product={item} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    list-style: none;
+    color: var(--text-muted);
+  }
+
+  .breadcrumb li + li::before {
+    content: "/";
+    margin-right: 0.5rem;
+    color: var(--text-muted);
+  }
+
+  .product {
+    display: grid;
+    gap: clamp(1.5rem, 5vw, 3.5rem);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+
+  @media (max-width: 52rem) {
+    .product {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .info .pill {
+    margin: 0 0 1rem;
+  }
+
+  .offers {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .offer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding: 0.9rem 1.1rem;
+    border: 2px solid var(--cyan-400);
+    border-radius: 1.5rem;
+    background: rgb(10 17 69 / 0.75);
+    box-shadow: 0 0 16px rgb(34 227 245 / 0.25);
+  }
+
+  .offer-label {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.3rem;
+  }
+
+  .offer .price {
+    font-size: 1.8rem;
+  }
+
+  .offer :global(.button) {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  @media (min-width: 30rem) {
+    .offer {
+      grid-template-columns: 1fr auto auto;
+    }
+
+    .offer :global(.button) {
+      grid-column: auto;
+    }
+  }
+
+  .notes {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0 0 1.25rem;
+    padding-left: 1.25rem;
+  }
+
+  .notes li::marker {
+    content: "✦  ";
+    color: var(--cyan-400);
+  }
+
+  .small {
+    font-size: 0.95rem;
+  }
+
+  .related {
+    padding-top: clamp(2.5rem, 7vw, 4.5rem);
+  }
+</style>

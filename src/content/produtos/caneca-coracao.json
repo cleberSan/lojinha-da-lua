@@ -1,0 +1,18 @@
+{
+  "name": "Caneca coração",
+  "category": "canecas",
+  "summary": "Caneca com alça em formato de coração e parte interna colorida.",
+  "image": {
+    "src": "../../assets/produtos/caneca-coracao.svg",
+    "alt": "Ilustração de uma caneca branca com alça vermelha em formato de coração",
+    "kind": "ilustracao"
+  },
+  "variants": [
+    {
+      "label": "Unidade",
+      "priceCents": 4800
+    }
+  ],
+  "notes": ["A arte vem de brinde."],
+  "order": 3
+}

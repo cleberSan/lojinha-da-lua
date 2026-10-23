@@ -1,0 +1,64 @@
+---
+import "@fontsource/nunito/400.css";
+import "@fontsource/nunito/700.css";
+import "@fontsource/alegreya-sans-sc/700.css";
+import "@fontsource/alegreya-sans-sc/800.css";
+import "../styles/global.css";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { store } from "../config/store";
+
+interface Props {
+  /** Título da página; o nome da loja é acrescentado, exceto na página inicial. */
+  title?: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const fullTitle = title ? `${title} | ${store.name}` : `${store.name}: ${store.tagline}`;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0a1145" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">
+      Pular para o conteúdo
+    </a>
+    <SiteHeader />
+    <main id="conteudo" tabindex="-1">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 10;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-pill);
+    background: var(--cyan-400);
+    color: var(--navy-900);
+    font-weight: 700;
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+  }
+
+  main:focus {
+    outline: none;
+  }
+</style>

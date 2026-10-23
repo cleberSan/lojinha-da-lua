@@ -1,0 +1,65 @@
+---
+import { getCollection } from "astro:content";
+import ProductCard from "../components/ProductCard.astro";
+import { formatPricesAsOf, store } from "../config/store";
+import { groupByCategory } from "../domain/catalog";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const groups = groupByCategory(await getCollection("products"));
+---
+
+<BaseLayout
+  title="Produtos"
+  description="Camisetas em sublimação e DTF e canecas personalizadas da Lojinha Da Lua, com preços e pedido pelo WhatsApp."
+>
+  <div class="container section">
+    <h1>Produtos</h1>
+    <p class="lead">
+      Valores de referência de {formatPricesAsOf(store.pricesAsOf)}. Escolha o produto e faça o
+      pedido pelo WhatsApp: o valor final é confirmado na conversa.
+    </p>
+    <nav aria-label="Categorias">
+      <ul class="pill-list">
+        {groups.map((group) => (
+          <li>
+            <a class="pill" href={`#${group.id}`}>
+              {group.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    {groups.map((group) => (
+      <section class="category" aria-labelledby={group.id}>
+        <h2 id={group.id}>{group.name}</h2>
+        <ul class="card-grid">
+          {group.products.map((product) => (
+            <li>
+              <ProductCard product={product} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  nav {
+    margin-block: 1.5rem 0.5rem;
+  }
+
+  nav .pill {
+    text-decoration: none;
+    min-height: 2.75rem;
+  }
+
+  nav .pill:hover {
+    box-shadow: var(--glow);
+  }
+
+  .category {
+    padding-top: 2.5rem;
+  }
+</style>

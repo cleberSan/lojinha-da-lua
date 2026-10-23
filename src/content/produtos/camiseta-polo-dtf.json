@@ -1,0 +1,19 @@
+{
+  "name": "Camiseta polo em DTF",
+  "category": "camisetas",
+  "technique": "DTF",
+  "summary": "Camiseta polo personalizada com estampa em DTF.",
+  "image": {
+    "src": "../../assets/produtos/camiseta-polo-dtf.png",
+    "alt": "Camiseta polo azul vista de frente e de costas, com o logo da Lojinha Da Lua estampado",
+    "kind": "foto"
+  },
+  "variants": [
+    {
+      "label": "Unidade",
+      "priceCents": 7000
+    }
+  ],
+  "notes": ["Arte minimalista de até 10 cm na frente ou nas costas vem de brinde."],
+  "order": 4
+}
