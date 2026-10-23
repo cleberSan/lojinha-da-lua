@@ -4,6 +4,13 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "lojinha-da-lua",
   "compatibility_date": "2026-10-01",
+  // Endereço público em <nome>.<subdomínio da conta>.workers.dev e um link de prévia por
+  // versão enviada de outra branch, fixados aqui para nenhum deploy desligar (ADR-0002).
+  "workers_dev": true,
+  "preview_urls": true,
+  // O build de prévia de cada PR roda `wrangler preview`, que exige este bloco. Vazio: a
+  // prévia usa os mesmos arquivos estáticos e não tem binding próprio (ADR-0008).
+  "previews": {},
   "assets": {
     "directory": "./dist",
     "not_found_handling": "404-page",

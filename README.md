@@ -2,10 +2,11 @@
 
 [![CI](https://github.com/cleberSan/lojinha-da-lua/actions/workflows/ci.yml/badge.svg)](https://github.com/cleberSan/lojinha-da-lua/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/cleberSan/lojinha-da-lua/actions/workflows/codeql.yml/badge.svg)](https://github.com/cleberSan/lojinha-da-lua/actions/workflows/codeql.yml)
+[![Site no ar](https://github.com/cleberSan/lojinha-da-lua/actions/workflows/producao.yml/badge.svg)](https://github.com/cleberSan/lojinha-da-lua/actions/workflows/producao.yml)
 
 Site da **Lojinha Da Lua**, loja de produtos personalizados (camisetas em sublimação e DTF, canecas), com catálogo, preços e pedido pelo WhatsApp. É também um projeto do portfólio de [Cleber Costa Santos](https://github.com/cleberSan).
 
-Construído com Astro 7 e TypeScript, publicado como site estático na Cloudflare.
+Construído com Astro 7 e TypeScript, publicado como site estático na Cloudflare: **<https://lojinha-da-lua.clebersan.workers.dev>**.
 
 ## O que tem no site
 
@@ -28,11 +29,12 @@ Cada botão de pedido abre `wa.me` com a mensagem pronta (produto, variação, p
 - Catálogo validado por schema: preço, variação ou imagem fora do formato quebram o build. Um teste compara os preços com os flyers da loja.
 - CSP por hash sem `'unsafe-inline'`, HSTS e demais cabeçalhos de segurança, de uma fonte só ([ADR-0004](docs/adr/0004-csp-por-hash-e-cabecalhos.md)).
 - Testes de unidade com Vitest (mínimo de 80% de cobertura no CI) e E2E com Playwright em desktop e celular, com axe (WCAG 2.1 AA), sobre o build servido pelo mesmo runtime da Cloudflare.
+- Os mesmos testes E2E rodam todo dia contra o site publicado e abrem uma issue se algo mudar no ar; o endereço de produção fica no código, sem variável no painel da Cloudflare ([ADR-0008](docs/adr/0008-conferencia-do-site-no-ar.md)).
 - CodeQL, revisão de dependências e Dependabot.
 
 ## Decisões
 
-As decisões arquiteturais estão em [docs/adr](docs/adr): stack, hospedagem gratuita na Cloudflare (a Vercel Hobby não permite uso comercial), imagens sem personagens de terceiros, CSP, pedido pelo WhatsApp, "Montar pedido" no navegador e SEO.
+As decisões arquiteturais estão em [docs/adr](docs/adr): stack, hospedagem gratuita na Cloudflare (a Vercel Hobby não permite uso comercial), imagens sem personagens de terceiros, CSP, pedido pelo WhatsApp, "Montar pedido" no navegador, SEO e conferência do site no ar.
 
 ## Rodando localmente
 

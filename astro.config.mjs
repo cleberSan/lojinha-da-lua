@@ -3,10 +3,10 @@ import { writeFile } from "node:fs/promises";
 import react from "@astrojs/react";
 import { defineConfig } from "astro/config";
 import { metaCspDirectives, renderHeadersFile } from "./src/config/security.ts";
-import { isIndexable, parseSiteUrl, publicPath } from "./src/config/site.ts";
+import { isIndexable, publicPath, siteUrlFromEnv } from "./src/config/site.ts";
 import { renderRobots, renderSitemap } from "./src/domain/seo.ts";
 
-const site = parseSiteUrl(process.env.SITE_URL);
+const site = siteUrlFromEnv(process.env);
 
 /** Grava dist/_headers a partir de src/config/security.ts, a única fonte dos cabeçalhos. */
 function cloudflareHeaders() {
@@ -22,8 +22,8 @@ function cloudflareHeaders() {
 }
 
 /**
- * Grava robots.txt sempre e sitemap.xml quando SITE_URL está definida (ADR-0007), com as
- * páginas geradas no build menos as de src/config/site.ts que ficam fora dos buscadores.
+ * Grava robots.txt e sitemap.xml (ADR-0007) com as páginas geradas no build, menos as de
+ * src/config/site.ts que ficam fora dos buscadores.
  */
 function searchEngineFiles() {
   return /** @type {import("astro").AstroIntegration} */ ({
@@ -31,10 +31,6 @@ function searchEngineFiles() {
     hooks: {
       "astro:build:done": async ({ dir, pages, logger }) => {
         await writeFile(new URL("robots.txt", dir), renderRobots(site));
-        if (!site) {
-          logger.warn("SITE_URL não definida: build sem sitemap.xml, canonical e JSON-LD");
-          return;
-        }
         const paths = pages.map((page) => publicPath(page.pathname)).filter(isIndexable);
         await writeFile(new URL("sitemap.xml", dir), renderSitemap(site, paths));
         logger.info(`sitemap.xml gerado com ${paths.length} páginas`);
@@ -44,7 +40,8 @@ function searchEngineFiles() {
 }
 
 export default defineConfig({
-  ...(site ? { site: site.origin } : {}),
+  // Endereço de produção, ou SITE_URL nos testes E2E (src/config/site.ts).
+  site: site.origin,
   // Gera produtos.html em vez de produtos/index.html: URLs sem barra no final, como os
   // arquivos estáticos da Cloudflare servem por padrão (ADR-0002).
   build: { format: "file", inlineStylesheets: "never" },
