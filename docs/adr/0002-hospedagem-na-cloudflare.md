@@ -22,7 +22,7 @@ Publicar `dist/` como arquivos estáticos de um Worker da Cloudflare (`wrangler.
 - **Portão de qualidade:** a Cloudflare publica o que chega ao `main`, então o `main` fica protegido exigindo PR e os checks de CI, revisão de dependências e CodeQL.
 - **Rollback:** voltar para a versão anterior em Deployments, no painel do Worker.
 - **Endereço:** `https://lojinha-da-lua.clebersan.workers.dev`, com `workers_dev` e `preview_urls` ligados no `wrangler.jsonc`. O subdomínio da conta foi trocado do padrão, derivado do e-mail, para o usuário público do GitHub, porque ele aparece em todo link compartilhado.
-- **Prévia por PR:** os builds de outras branches (Preview builds) geram um link de prévia por versão, para revisar no celular antes do merge. Esses links são públicos, como o código do repositório, e o canonical deles aponta para a produção.
+- **Prévia por PR:** os builds de outras branches rodam `wrangler preview` e geram um link de prévia por branch, para revisar no celular antes do merge. Esses links são públicos, como o código do repositório; no `workers.dev` a Cloudflare manda `X-Robots-Tag: noindex`, e o canonical deles aponta para a produção.
 
 ## Alternativas
 
