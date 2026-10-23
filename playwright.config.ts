@@ -24,7 +24,10 @@ export default defineConfig({
   use: {
     baseURL,
     locale: "pt-BR",
-    trace: "retain-on-failure",
+    // Contra a produção, o trace de cada falha leva junto todas as imagens da página e o
+    // artefato passou de 800 MB numa execução; lá bastam a mensagem de erro e o screenshot.
+    trace: remoteURL ? "off" : "retain-on-failure",
+    screenshot: remoteURL ? "only-on-failure" : "off",
     launchOptions: executablePath ? { executablePath } : {},
   },
   projects: [
