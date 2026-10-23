@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import ProductCard from "../components/ProductCard.astro";
-import { formatPricesAsOf, store } from "../config/store";
+import { formatMonthYear, store } from "../config/store";
 import { groupByCategory } from "../domain/catalog";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
@@ -15,7 +15,7 @@ const groups = groupByCategory(await getCollection("products"));
   <div class="container section">
     <h1>Produtos</h1>
     <p class="lead">
-      Valores de referência de {formatPricesAsOf(store.pricesAsOf)}. Escolha o produto e faça o
+      Valores de referência de {formatMonthYear(store.pricesAsOf)}. Escolha o produto e faça o
       pedido pelo WhatsApp: o valor final é confirmado na conversa.
     </p>
     <nav aria-label="Categorias">

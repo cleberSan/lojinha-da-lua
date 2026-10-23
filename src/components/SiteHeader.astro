@@ -1,14 +1,15 @@
 ---
 import { Image } from "astro:assets";
 import logo from "../assets/marca/logo.png";
+import { publicPath } from "../config/site";
 import { orderContact, store } from "../config/store";
 import WhatsAppButton from "./WhatsAppButton.astro";
 
-const currentPath = Astro.url.pathname;
+const currentPath = publicPath(Astro.url.pathname);
 const links = [
   { href: "/produtos", label: "Produtos" },
-  { href: "/produtos#camisetas", label: "Camisetas" },
-  { href: "/produtos#canecas", label: "Canecas" },
+  { href: "/pedido", label: "Meu pedido" },
+  { href: "/contato", label: "Contato" },
 ];
 ---
 

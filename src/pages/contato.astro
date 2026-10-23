@@ -1,0 +1,93 @@
+---
+import ExternalLink from "../components/ExternalLink.astro";
+import Icon from "../components/Icon.astro";
+import WhatsAppButton from "../components/WhatsAppButton.astro";
+import { store } from "../config/store";
+import { formatBrazilianMobile } from "../domain/phone";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Contato"
+  description="Fale com a Lojinha Da Lua pelo WhatsApp ou pelo Instagram para tirar dúvidas e fazer pedidos."
+>
+  <div class="container section">
+    <p class="pill">Contato</p>
+    <h1>Entre em contato e faça seus pedidos</h1>
+    <p class="lead">
+      Estamos abertos para qualquer dúvida! Fale com a loja pelo WhatsApp ou pelo Instagram.
+    </p>
+
+    <ul class="channels">
+      {store.whatsapp.map((contact) => (
+        <li class="channel">
+          <h2>{contact.label}</h2>
+          <p class="number">WhatsApp {formatBrazilianMobile(contact.phone)}</p>
+          {contact.receivesOrders && <p class="muted">Recebe os pedidos enviados pelo site.</p>}
+          <WhatsAppButton
+            phone={contact.phone}
+            label={`${contact.label} no WhatsApp`}
+            size="small"
+          />
+        </li>
+      ))}
+      <li class="channel">
+        <h2>Instagram</h2>
+        <p class="number">@{store.instagram.handle}</p>
+        <p class="muted">Modelos e novidades publicados pela loja.</p>
+        <ExternalLink class="button button-ghost button-small" href={store.instagram.url}>
+          <Icon name="instagram" size={18} /> Abrir o Instagram
+        </ExternalLink>
+      </li>
+    </ul>
+
+    <p class="muted">
+      Quer pedir vários produtos de uma vez? Junte tudo em <a href="/pedido">Meu pedido</a> e envie
+      numa mensagem só.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .pill {
+    margin: 0 0 1rem;
+  }
+
+  .channels {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    margin: 2rem 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .channel {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 0.4rem;
+    padding: 1.25rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-card);
+    background: rgb(10 17 69 / 0.65);
+  }
+
+  .channel h2 {
+    font-size: 1.6rem;
+    margin: 0;
+  }
+
+  .channel p {
+    margin: 0;
+  }
+
+  .number {
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+
+  .channel :global(.button) {
+    margin-top: 0.6rem;
+  }
+</style>

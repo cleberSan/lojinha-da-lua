@@ -1,0 +1,75 @@
+---
+import ExternalLink from "../components/ExternalLink.astro";
+import { formatMonthYear, orderContact, store } from "../config/store";
+import { formatBrazilianMobile } from "../domain/phone";
+import { buildWhatsAppUrl } from "../domain/whatsapp";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+/** Mês da última revisão deste texto. Mudou o que o site guarda ou usa? Revise e atualize. */
+const updatedAt = "2026-10";
+---
+
+<BaseLayout
+  title="Privacidade"
+  description="Como o site da Lojinha Da Lua trata seus dados: sem cadastro, sem cookies e com o pedido guardado só no seu aparelho."
+>
+  <article class="container section prose">
+    <h1>Privacidade</h1>
+    <p class="lead">
+      Este site é uma vitrine: não tem cadastro, formulário, cookies nem ferramentas de análise ou
+      de anúncios.
+    </p>
+    <p class="muted">Atualizado em {formatMonthYear(updatedAt)}.</p>
+
+    <h2>O que fica no seu aparelho</h2>
+    <p>
+      Quando você usa <a href="/pedido">Meu pedido</a>, os itens escolhidos (produto, opção e
+      quantidade) ficam guardados só neste navegador, no armazenamento local do aparelho. Eles não
+      são enviados ao site nem à loja. Nada sobre você entra nesse registro.
+    </p>
+    <p>
+      Para apagar, use “Esvaziar pedido” na página Meu pedido ou limpe os dados deste site nas
+      configurações do navegador.
+    </p>
+
+    <h2>Quando você fala com a loja</h2>
+    <p>
+      Os botões do WhatsApp e do Instagram levam você para fora do site, para serviços da Meta, que
+      seguem as políticas de privacidade deles. A mensagem pronta do pedido só é enviada se você
+      tocar em enviar no WhatsApp.
+    </p>
+    <p>
+      Na conversa, a {store.name} recebe o que o próprio WhatsApp ou Instagram mostra (como seu nome
+      de perfil e seu número) e o que você escrever, e usa essas informações para atender você e o
+      seu pedido.
+    </p>
+
+    <h2>Hospedagem</h2>
+    <p>
+      O site é hospedado pela Cloudflare, que processa dados técnicos das conexões, como o endereço
+      IP, para entregar as páginas e proteger o site contra ataques, conforme a política de
+      privacidade dela. O site não liga os registros de acesso opcionais da Cloudflare.
+    </p>
+
+    <h2>Seus direitos</h2>
+    <p>
+      Pela Lei Geral de Proteção de Dados (Lei 13.709/2018), você pode pedir à {store.name} acesso,
+      correção ou eliminação dos dados trocados nas conversas. Fale pelo WhatsApp{" "}
+      <ExternalLink href={buildWhatsAppUrl(orderContact.phone, "")}>
+        {formatBrazilianMobile(orderContact.phone)}
+      </ExternalLink>
+      .
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .prose {
+    max-width: 48rem;
+  }
+
+  .prose h2 {
+    margin-top: 2rem;
+    font-size: 1.75rem;
+  }
+</style>

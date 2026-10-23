@@ -4,18 +4,50 @@ import "@fontsource/nunito/700.css";
 import "@fontsource/alegreya-sans-sc/700.css";
 import "@fontsource/alegreya-sans-sc/800.css";
 import "../styles/global.css";
+import { getImage } from "astro:assets";
+import shareImageSource from "../assets/marca/compartilhamento.png";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
+import { isIndexable, publicPath } from "../config/site";
 import { store } from "../config/store";
+import { serializeJsonLd } from "../domain/seo";
+
+export interface ShareImage {
+  /** Caminho no próprio site, como o `src` devolvido por `getImage`. */
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+}
 
 interface Props {
   /** Título da página; o nome da loja é acrescentado, exceto na página inicial. */
   title?: string;
   description: string;
+  /** Imagem da prévia do link (WhatsApp, Instagram, buscadores); padrão: a da marca. */
+  image?: ShareImage | undefined;
+  /** Dados estruturados (schema.org) com URLs absolutas; só saem quando há SITE_URL. */
+  jsonLd?: readonly Record<string, unknown>[] | undefined;
 }
 
-const { title, description } = Astro.props;
+const { title, description, image, jsonLd } = Astro.props;
 const fullTitle = title ? `${title} | ${store.name}` : `${store.name}: ${store.tagline}`;
+
+// SEO (ADR-0007): URLs absolutas só existem quando o build conhece o endereço (SITE_URL).
+const site = Astro.site;
+const path = publicPath(Astro.url.pathname);
+const indexable = isIndexable(path);
+// Página fora dos buscadores (pedido, 404) não declara endereço canônico.
+const canonical = site && indexable ? new URL(path, site).href : undefined;
+const brandImage = await getImage({ src: shareImageSource, format: "jpeg", quality: 85 });
+const shareImage = image ?? {
+  src: brandImage.src,
+  width: shareImageSource.width,
+  height: shareImageSource.height,
+  alt: `${store.name}: ${store.tagline}`,
+};
+const shareImageUrl = site ? new URL(shareImage.src, site).href : undefined;
+const isWideImage = shareImage.width >= shareImage.height * 1.5;
 ---
 
 <!doctype html>
@@ -25,9 +57,29 @@ const fullTitle = title ? `${title} | ${store.name}` : `${store.name}: ${store.t
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {!indexable && <meta name="robots" content="noindex" />}
+    {canonical && <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content="#0a1145" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={store.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {shareImageUrl && (
+      <>
+        <meta property="og:image" content={shareImageUrl} />
+        <meta property="og:image:width" content={String(shareImage.width)} />
+        <meta property="og:image:height" content={String(shareImage.height)} />
+        <meta property="og:image:alt" content={shareImage.alt} />
+        <meta name="twitter:card" content={isWideImage ? "summary_large_image" : "summary"} />
+      </>
+    )}
+    {site && jsonLd && jsonLd.length > 0 && (
+      <script is:inline type="application/ld+json" set:html={serializeJsonLd(jsonLd)} />
+    )}
   </head>
   <body>
     <a class="skip-link" href="#conteudo">

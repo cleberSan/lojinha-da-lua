@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildOrderMessage,
   buildWhatsAppUrl,
+  lineName,
   MAX_MESSAGE_LENGTH,
   MAX_QUANTITY,
   type OrderLine,
@@ -102,5 +103,14 @@ describe("buildWhatsAppUrl", () => {
 
   it("recusa o número sem o 55 do Brasil", () => {
     expect(() => buildWhatsAppUrl("11958877762", "oi")).toThrow(RangeError);
+  });
+});
+
+describe("lineName", () => {
+  it("junta produto e variação, ou só o produto", () => {
+    expect(lineName(dtfA3)).toBe("Camiseta em DTF (Estampa A3)");
+    expect(lineName({ productName: "Caneca mágica", variantLabel: undefined })).toBe(
+      "Caneca mágica",
+    );
   });
 });

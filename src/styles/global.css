@@ -13,6 +13,7 @@
   --cyan-400: #22e3f5;
   --cyan-300: #8af2fc;
   --rose-400: #fb7185;
+  --amber-200: #fde68a;
   --text: #f4f6ff;
   --text-muted: #c3cbf5;
   --surface: rgb(255 255 255 / 0.06);
@@ -229,6 +230,12 @@ p {
   .button:hover {
     transform: none;
   }
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .button-primary {

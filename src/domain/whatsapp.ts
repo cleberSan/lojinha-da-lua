@@ -12,9 +12,21 @@ export interface OrderLine {
 export const MAX_MESSAGE_LENGTH = 1500;
 export const MAX_QUANTITY = 99;
 
-function describeLine({ productName, variantLabel, unitPriceCents, quantity }: OrderLine): string {
-  const name = variantLabel ? `${productName} (${variantLabel})` : productName;
-  return `- ${quantity}x ${name}: ${formatBRL(unitPriceCents)} cada`;
+/** Nome do item como aparece na mensagem e na tela: "Camiseta em DTF (Estampa A3)". */
+export function lineName({
+  productName,
+  variantLabel,
+}: Pick<OrderLine, "productName" | "variantLabel">): string {
+  return variantLabel ? `${productName} (${variantLabel})` : productName;
+}
+
+function describeLine(line: OrderLine): string {
+  return `- ${line.quantity}x ${lineName(line)}: ${formatBRL(line.unitPriceCents)} cada`;
+}
+
+/** Soma de referência do pedido, em centavos. */
+export function orderTotalCents(lines: readonly OrderLine[]): number {
+  return lines.reduce((sum, line) => sum + line.unitPriceCents * line.quantity, 0);
 }
 
 /**
@@ -31,11 +43,10 @@ export function buildOrderMessage(storeName: string, lines: readonly OrderLine[]
     }
   }
 
-  const totalCents = lines.reduce((sum, line) => sum + line.unitPriceCents * line.quantity, 0);
   const message = [
     `Olá, ${storeName}! Vim pelo site e quero fazer um pedido:`,
     ...lines.map(describeLine),
-    `Total de referência: ${formatBRL(totalCents)}`,
+    `Total de referência: ${formatBRL(orderTotalCents(lines))}`,
   ].join("\n");
 
   if (message.length > MAX_MESSAGE_LENGTH) {

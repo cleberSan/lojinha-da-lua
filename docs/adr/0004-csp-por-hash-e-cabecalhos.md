@@ -16,6 +16,7 @@ A política é dividida em duas, que o navegador aplica juntas (vale a interseç
 - **Demais cabeçalhos em todas as rotas:** HSTS de dois anos com subdomínios, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` negando câmera, microfone, localização, pagamento, USB e tópicos, e `Cross-Origin-Opener-Policy: same-origin`.
 - **Uma fonte só:** tudo vem de `src/config/security.ts`. Uma integração no `astro.config.mjs` grava `dist/_headers` no fim do build; o Astro usa as mesmas diretivas no `<meta>`.
 - **Estilos em arquivo:** `build.inlineStylesheets: "never"` e nenhum atributo `style`, para não precisar liberar estilo inline.
+- **Ilhas React (ADR-0006):** os poucos scripts e o estilo que o Astro coloca no HTML para hidratar as ilhas entram por hash, calculado no build; os componentes vêm de `/_astro`, cobertos por `'self'`. O JSON-LD (ADR-0007) é dado, não código: o navegador não o executa e a CSP não se aplica a ele.
 - **Links externos** (WhatsApp e Instagram) só em `https`, com `target="_blank"` e `rel="noopener noreferrer"`.
 
 ## Alternativas
@@ -26,6 +27,6 @@ A política é dividida em duas, que o navegador aplica juntas (vale a interseç
 
 ## Consequências
 
-- O `<meta>` só vale a partir de onde aparece no `<head>`; antes dele há apenas `charset`, `viewport`, título, descrição e ícones, nenhum recurso que execute código.
-- Os testes E2E conferem os cabeçalhos servidos pelo `wrangler dev`, a ausência de `'unsafe-inline'`, de script inline, de atributo `style` e de handler `on*` no HTML, e falham se o navegador registrar erro de console ou requisição para outra origem.
+- O `<meta>` só vale a partir de onde aparece no `<head>`; antes dele há apenas `charset`, `viewport`, título, descrições, ícones, metadados de prévia e o JSON-LD, nada que execute código.
+- Os testes E2E conferem os cabeçalhos servidos pelo `wrangler dev`, a ausência de `'unsafe-inline'`, que todo script e estilo inline tem o hash na CSP, a ausência de atributo `style` e de handler `on*` no HTML, que só as páginas com ilha carregam JavaScript, e falham se o navegador registrar erro de console ou requisição para outra origem.
 - Qualquer serviço de terceiros (analytics, fontes externas, embeds) exige mudar `src/config/security.ts` e um novo ADR.

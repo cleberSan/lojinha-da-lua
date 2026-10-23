@@ -1,0 +1,343 @@
+/*
+ * Ilhas do pedido (ADR-0006): painel "Montar pedido" da página do produto e a página
+ * "Meu pedido". Usa os tokens de src/styles/global.css. O Vite empacota este arquivo como
+ * folha de estilo externa, então a CSP não precisa liberar estilo inline.
+ */
+.order-panel {
+  margin: 1.75rem 0;
+  padding: 1.25rem 1.25rem 1.1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-card);
+  background: rgb(10 17 69 / 0.6);
+}
+
+.order-panel-title {
+  font-size: 1.6rem;
+  margin-bottom: 0.25em;
+}
+
+.order-panel-intro {
+  color: var(--text-muted);
+}
+
+.order-panel-link {
+  font-weight: 700;
+}
+
+.order-form {
+  display: grid;
+  gap: 1.1rem;
+  justify-items: start;
+}
+
+.order-variants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.order-variants legend {
+  margin-bottom: 0.5rem;
+  padding: 0;
+  font-weight: 700;
+}
+
+.order-variant {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  padding: 0.45rem 0.95rem;
+  border: 2px solid rgb(138 242 252 / 0.45);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.order-variant:has(input:checked) {
+  border-color: var(--cyan-400);
+  box-shadow: var(--glow);
+}
+
+.order-variant:has(input:focus-visible) {
+  outline: 3px solid var(--cyan-400);
+  outline-offset: 3px;
+}
+
+.order-variant input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  accent-color: var(--cyan-400);
+}
+
+.order-variant .price {
+  font-size: 1.05rem;
+}
+
+.order-quantity {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.order-quantity label {
+  font-weight: 700;
+}
+
+.order-quantity input,
+.order-stepper input {
+  width: 5.5rem;
+  min-height: 2.75rem;
+  padding: 0.4rem 0.75rem;
+  border: 2px solid rgb(138 242 252 / 0.6);
+  border-radius: 0.9rem;
+  background: var(--navy-950);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+}
+
+.order-quantity input[aria-invalid="true"] {
+  border-color: var(--rose-400);
+}
+
+.order-error {
+  margin: 0;
+  color: var(--rose-400);
+  font-weight: 700;
+}
+
+.order-feedback {
+  min-height: 1.6em;
+  margin: 0.9rem 0 0.4rem;
+  font-weight: 700;
+}
+
+.order-feedback-success {
+  color: var(--cyan-300);
+}
+
+.order-feedback-warning {
+  color: var(--amber-200);
+}
+
+.order-notice {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--amber-200);
+  border-radius: 0.5rem;
+  background: rgb(253 230 138 / 0.08);
+}
+
+/* Página "Meu pedido" */
+.order-builder {
+  margin-top: 1.5rem;
+}
+
+.order-loading {
+  min-height: 12rem;
+}
+
+.order-heading {
+  font-size: 1.75rem;
+}
+
+.order-count {
+  color: var(--text-muted);
+  font-size: 0.75em;
+}
+
+.order-lines {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.order-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  padding: 1rem 1.1rem;
+  border: 2px solid rgb(138 242 252 / 0.45);
+  border-radius: 1.25rem;
+  background: rgb(10 17 69 / 0.7);
+}
+
+.order-line-info {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.order-line-name {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  text-decoration: none;
+}
+
+.order-line-name:hover {
+  color: var(--cyan-300);
+  text-decoration: underline;
+}
+
+.order-line-variant {
+  color: var(--cyan-300);
+  font-weight: 700;
+}
+
+.order-line-unit {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.order-line-subtotal {
+  min-width: 6.5rem;
+  margin: 0;
+  text-align: right;
+}
+
+.order-line-subtotal .price {
+  font-size: 1.3rem;
+}
+
+/* No celular: nome e "Remover" em cima, quantidade e subtotal embaixo. */
+@media (max-width: 40rem) {
+  .order-line {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "info remove"
+      "quantity subtotal";
+  }
+
+  .order-line-info {
+    grid-area: info;
+  }
+
+  .order-stepper {
+    grid-area: quantity;
+  }
+
+  .order-line-subtotal {
+    grid-area: subtotal;
+    min-width: 0;
+  }
+
+  .order-remove {
+    grid-area: remove;
+    align-self: start;
+    justify-self: end;
+  }
+}
+
+.order-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.order-stepper button {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid var(--cyan-400);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.order-stepper button[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.order-stepper input {
+  width: 4rem;
+  text-align: center;
+}
+
+.order-remove,
+.order-clear {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--cyan-300);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.order-summary {
+  display: grid;
+  gap: 0.9rem;
+  justify-items: start;
+  padding: 1.25rem;
+  border: 2px solid var(--cyan-400);
+  border-radius: var(--radius-card);
+  background: rgb(10 17 69 / 0.8);
+  box-shadow: 0 0 16px rgb(34 227 245 / 0.25);
+}
+
+.order-total {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.4rem;
+}
+
+.order-total .price {
+  font-size: 2rem;
+}
+
+.order-hint {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.order-preview summary {
+  color: var(--cyan-300);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.order-preview pre {
+  margin: 0.6rem 0 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgb(138 242 252 / 0.3);
+  border-radius: 0.9rem;
+  background: var(--navy-950);
+  font-family: var(--font-body);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.order-actions,
+.order-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.25rem;
+}
+
+.order-confirm {
+  gap: 0.6rem;
+}
+
+.order-empty .button {
+  margin-top: 0.5rem;
+}

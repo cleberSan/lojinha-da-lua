@@ -77,3 +77,39 @@ test("o rodapé lista os dois WhatsApp e o Instagram da loja", async ({ page }) 
     "https://www.instagram.com/lojinhadalua___",
   );
 });
+
+test("a página de contato lista os dois WhatsApp e o Instagram", async ({ page }) => {
+  await page.goto("/contato");
+  const main = page.getByRole("main");
+  await expect(main.getByRole("link", { name: /Atendimento no WhatsApp/ })).toHaveAttribute(
+    "href",
+    "https://wa.me/5511958877762",
+  );
+  await expect(main.getByRole("link", { name: /Luiz no WhatsApp/ })).toHaveAttribute(
+    "href",
+    "https://wa.me/5511998241075",
+  );
+  await expect(main.getByText("Recebe os pedidos enviados pelo site.")).toHaveCount(1);
+  await expect(main.getByRole("link", { name: /Abrir o Instagram/ })).toHaveAttribute(
+    "href",
+    "https://www.instagram.com/lojinhadalua___",
+  );
+});
+
+test("o menu leva a Meu pedido e Contato, e o rodapé à Privacidade", async ({ page }) => {
+  await page.goto("/");
+  const nav = page.getByRole("navigation", { name: "Principal" });
+  await nav.getByRole("link", { name: "Meu pedido" }).click();
+  await expect(page).toHaveURL(/\/pedido$/);
+  await expect(nav.getByRole("link", { name: "Meu pedido" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+
+  await nav.getByRole("link", { name: "Contato" }).click();
+  await expect(page).toHaveURL(/\/contato$/);
+
+  await page.getByRole("contentinfo").getByRole("link", { name: "Privacidade" }).click();
+  await expect(page).toHaveURL(/\/privacidade$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Privacidade");
+});
