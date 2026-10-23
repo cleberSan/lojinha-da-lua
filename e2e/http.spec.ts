@@ -35,18 +35,24 @@ for (const route of routes) {
 
     // Script e estilo inline só os que o Astro gera para as ilhas, todos com hash na CSP.
     // JSON-LD é dado, não código: o navegador não executa e a CSP não se aplica.
-    for (const [, attributes, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
-      if (/\bsrc=/.test(attributes!) || /type="application\/ld\+json"/.test(attributes!)) continue;
+    // As expressões ignoram maiúsculas e aceitam espaço ou atributo no fechamento, como o
+    // navegador, para que nenhuma variação de tag escape da conferência.
+    const isJsonLd = (attributes: string) =>
+      /type\s*=\s*["']?application\/ld\+json/i.test(attributes);
+    for (const [, attributes, body] of html.matchAll(
+      /<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi,
+    )) {
+      if (/\bsrc\s*=/i.test(attributes!) || isJsonLd(attributes!)) continue;
       expect(policy, "script inline sem hash na CSP").toContain(sha256(body!));
     }
-    for (const [, body] of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)) {
+    for (const [, body] of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style\b[^>]*>/gi)) {
       expect(policy, "estilo inline sem hash na CSP").toContain(sha256(body!));
     }
-    expect(html).not.toMatch(/\sstyle="/);
-    expect(html).not.toMatch(/\son[a-z]+="/);
+    expect(html).not.toMatch(/\sstyle\s*=/i);
+    expect(html).not.toMatch(/\son[a-z]+\s*=/i);
 
     // Só as páginas com ilha do pedido carregam JavaScript.
-    const executable = /<script\b(?![^>]*type="application\/ld\+json")/;
+    const executable = /<script\b(?![^>]*type\s*=\s*["']?application\/ld\+json)/i;
     if (islandRoutes.includes(route)) {
       expect(html).toMatch(executable);
     } else {
