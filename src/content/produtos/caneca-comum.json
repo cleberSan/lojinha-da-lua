@@ -3,9 +3,9 @@
   "category": "canecas",
   "summary": "Caneca branca personalizada com a arte que você escolher.",
   "image": {
-    "src": "../../assets/produtos/caneca-comum.svg",
-    "alt": "Ilustração de uma caneca branca com uma lua crescente estampada",
-    "kind": "ilustracao"
+    "src": "../../assets/produtos/caneca-comum.jpg",
+    "alt": "Três canecas brancas estampadas com a arte de um personagem de anime em laranja, vermelho e preto",
+    "kind": "foto"
   },
   "variants": [
     {

@@ -38,7 +38,7 @@ const steps = [
 
 // JSON-LD da loja (ADR-0007), só quando o build conhece o endereço do site.
 const site = Astro.site;
-const logoImage = await getImage({ src: logo, format: "png" });
+const logoImage = await getImage({ src: logo, format: "png", width: 314 });
 const jsonLd = site
   ? [
       organizationJsonLd({
@@ -76,8 +76,9 @@ const jsonLd = site
       <Image
         src={logo}
         alt={`Logo da ${store.name}: lua crescente com planeta e estrelas`}
-        width={314}
-        height={314}
+        width={352}
+        height={352}
+        densities={[1, 2]}
         loading="eager"
         fetchpriority="high"
       />

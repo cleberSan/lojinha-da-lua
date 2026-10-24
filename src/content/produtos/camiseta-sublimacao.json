@@ -4,8 +4,8 @@
   "technique": "Sublimação",
   "summary": "Camiseta de poliéster com a sua arte em tamanho A4 na frente, nas costas ou nos dois lados.",
   "image": {
-    "src": "../../assets/produtos/camiseta-sublimacao.png",
-    "alt": "Camiseta branca com um retângulo tamanho A4 escrito \"Sua arte aqui\" no peito",
+    "src": "../../assets/produtos/camiseta-sublimacao.jpg",
+    "alt": "Duas camisetas brancas no cabide: uma com um retângulo A4 escrito \"Sua arte aqui\" e outra com um retrato em preto e branco no tamanho A4",
     "kind": "foto"
   },
   "variants": [

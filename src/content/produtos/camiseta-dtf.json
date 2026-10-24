@@ -4,9 +4,9 @@
   "technique": "DTF",
   "summary": "Camiseta com estampa em DTF no tamanho A4 ou A3.",
   "image": {
-    "src": "../../assets/produtos/camiseta-dtf.svg",
-    "alt": "Ilustração de uma camiseta preta com uma lua crescente estampada no peito",
-    "kind": "ilustracao"
+    "src": "../../assets/produtos/camiseta-dtf.jpg",
+    "alt": "Três camisetas no cabide: uma branca com estampa A3, uma preta com estampa A4 e uma preta com arte minimalista no peito",
+    "kind": "foto"
   },
   "variants": [
     {

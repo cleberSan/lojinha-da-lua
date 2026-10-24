@@ -3,9 +3,9 @@
   "category": "canecas",
   "summary": "Caneca com alça em formato de coração e parte interna colorida.",
   "image": {
-    "src": "../../assets/produtos/caneca-coracao.svg",
-    "alt": "Ilustração de uma caneca branca com alça vermelha em formato de coração",
-    "kind": "ilustracao"
+    "src": "../../assets/produtos/caneca-coracao.jpg",
+    "alt": "Três canecas brancas com interior vermelho e alça vermelha em formato de coração, estampadas com ratinhos de desenho e a palavra love",
+    "kind": "foto"
   },
   "variants": [
     {

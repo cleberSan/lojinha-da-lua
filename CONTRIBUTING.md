@@ -37,7 +37,7 @@ Tudo que a loja publica vem dela: não invente preço, prazo, forma de pagamento
 
 - **Preço:** altere `priceCents` (em centavos: R$ 70,00 é `7000`) no JSON do produto em `src/content/produtos/` e a tabela `flyerPrices` em `src/content/catalog.test.ts` no mesmo PR. Atualize também `pricesAsOf` em `src/config/store.ts` com o mês da conferência.
 - **Produto novo:** crie `src/content/produtos/<slug>.json` seguindo os existentes. O nome do arquivo vira a URL. O schema em `src/domain/catalog.ts` diz o que é obrigatório.
-- **Imagem:** coloque em `src/assets/produtos/`. Foto da loja usa `"kind": "foto"`; desenho provisório usa `"kind": "ilustracao"`. Não use imagem com personagem, marca ou pessoa de terceiros sem autorização ([ADR-0003](docs/adr/0003-imagens-sem-terceiros.md)).
+- **Imagem:** quadrada, com pelo menos 1200 px de lado, em `src/assets/produtos/` (um teste confere). Foto da loja usa `"kind": "foto"`; desenho provisório usa `"kind": "ilustracao"`. As fotos atuais vêm dos flyers e mostram estampas com personagens e pessoas de terceiros, por decisão registrada no [ADR-0009](docs/adr/0009-fotos-dos-flyers-com-estampas-originais.md), que também diz o que fazer se chegar um pedido de remoção. Foto nova da loja, sem terceiros, tem preferência.
 - **Contatos:** WhatsApp e Instagram ficam em `src/config/store.ts`. Celular no formato `55DD9XXXXXXXX` e exatamente um número com `receivesOrders: true`.
 
 ## Publicação

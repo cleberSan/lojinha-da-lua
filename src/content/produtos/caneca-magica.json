@@ -3,9 +3,9 @@
   "category": "canecas",
   "summary": "Caneca preta que revela a estampa quando recebe bebida quente.",
   "image": {
-    "src": "../../assets/produtos/caneca-magica.svg",
-    "alt": "Ilustração de uma caneca preta soltando vapor, com a estampa ainda escondida",
-    "kind": "ilustracao"
+    "src": "../../assets/produtos/caneca-magica.jpg",
+    "alt": "Três canecas mágicas: uma preta soltando vapor, uma revelando a estampa e uma com a foto de uma família já revelada",
+    "kind": "foto"
   },
   "variants": [
     {

@@ -1,6 +1,6 @@
 # ADR-0003: Imagens só da loja, sem personagens ou pessoas de terceiros
 
-- Status: aceito
+- Status: substituído pelo [ADR-0009](0009-fotos-dos-flyers-com-estampas-originais.md)
 - Data: 2026-10-23
 
 ## Contexto

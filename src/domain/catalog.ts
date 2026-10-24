@@ -25,7 +25,7 @@ export function createProductSchema<TImage extends z.ZodType>(imageSchema: TImag
       image: z.object({
         src: imageSchema,
         alt: z.string().min(10).max(160),
-        /** "foto" é imagem da loja; "ilustracao" é desenho neutro até a loja enviar a foto (ADR-0003). */
+        /** "foto" é imagem da loja; "ilustracao" é desenho provisório, a volta caso uma estampa saia do ar (ADR-0009). */
         kind: z.enum(["foto", "ilustracao"]),
       }),
       variants: z
