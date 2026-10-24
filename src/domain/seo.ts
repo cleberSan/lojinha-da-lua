@@ -66,7 +66,7 @@ export interface ProductInput {
   description: string;
   url: string;
   category: string;
-  /** Só fotos da loja: ilustração provisória não representa o produto (ADR-0003). */
+  /** Só fotos da loja: ilustração provisória não representa o produto (ADR-0009). */
   imageUrl?: string | undefined;
   sellerName: string;
   pricesCents: readonly number[];

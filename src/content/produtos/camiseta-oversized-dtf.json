@@ -4,9 +4,9 @@
   "technique": "DTF",
   "summary": "Camiseta oversized com estampa em DTF no tamanho A4 ou A3.",
   "image": {
-    "src": "../../assets/produtos/camiseta-oversized-dtf.svg",
-    "alt": "Ilustração de uma camiseta oversized preta com uma lua crescente estampada no peito",
-    "kind": "ilustracao"
+    "src": "../../assets/produtos/camiseta-oversized-dtf.jpg",
+    "alt": "Três camisetas oversized pretas: uma com estampa A4 e outra com estampa A3 de um personagem de anime, e uma com arte minimalista",
+    "kind": "foto"
   },
   "variants": [
     {

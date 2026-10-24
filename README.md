@@ -34,7 +34,7 @@ Cada botão de pedido abre `wa.me` com a mensagem pronta (produto, variação, p
 
 ## Decisões
 
-As decisões arquiteturais estão em [docs/adr](docs/adr): stack, hospedagem gratuita na Cloudflare (a Vercel Hobby não permite uso comercial), imagens sem personagens de terceiros, CSP, pedido pelo WhatsApp, "Montar pedido" no navegador, SEO e conferência do site no ar.
+As decisões arquiteturais estão em [docs/adr](docs/adr): stack, hospedagem gratuita na Cloudflare (a Vercel Hobby não permite uso comercial), fotos dos produtos a partir dos flyers da loja, CSP, pedido pelo WhatsApp, "Montar pedido" no navegador, SEO e conferência do site no ar.
 
 ## Rodando localmente
 

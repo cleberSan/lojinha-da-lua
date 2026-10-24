@@ -13,8 +13,9 @@ interface Props {
 
 const { src, alt, kind, sizes, loading = "lazy", showCaption = false } = Astro.props;
 // Ilustrações em SVG vão como estão; fotos viram AVIF/WebP em várias larguras no build.
+// As fotos têm 1200 px: o cartão no celular e a página do produto em tela 2x pedem 900 ou mais.
 const isVector = src.format === "svg";
-const widths = [300, 450, 600].filter((width) => width <= src.width);
+const widths = [300, 450, 600, 900, 1200].filter((width) => width <= src.width);
 ---
 
 <figure class="product-image" data-kind={kind}>

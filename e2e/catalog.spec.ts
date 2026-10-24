@@ -50,11 +50,20 @@ test("produto de preço único pede sem variação na mensagem", async ({ page }
   expect(message).toContain(`- 1x Caneca mágica: R$${nbsp}50,00 cada`);
 });
 
-test("ilustrações são identificadas e fotos não", async ({ page }) => {
-  await page.goto("/produtos/caneca-coracao");
-  await expect(page.getByText("Ilustração do modelo: não é foto do produto.")).toBeVisible();
+test("os produtos mostram a foto da loja, sem selo de ilustração", async ({ page }) => {
+  await page.goto("/produtos");
+  await expect(page.getByText("Ilustração", { exact: true })).toHaveCount(0);
 
   await page.goto("/produtos/camiseta-sublimacao");
+  const photo = page.getByRole("img", { name: /Sua arte aqui/ });
+  await expect(photo).toBeVisible();
+  await expect
+    .poll(() => photo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth))
+    .toBeGreaterThan(0);
+  // A versão de 1200 px entra no srcset para telas de alta densidade (ADR-0009).
+  await expect(
+    page.locator("picture", { has: photo }).locator("source[type='image/avif']"),
+  ).toHaveAttribute("srcset", /\b1200w\b/);
   await expect(page.getByText("Ilustração do modelo: não é foto do produto.")).toHaveCount(0);
   await expect(
     page.getByText("Sublimação somente em camisetas de poliéster, em qualquer cor, exceto preta."),

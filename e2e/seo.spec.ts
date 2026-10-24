@@ -100,7 +100,7 @@ for (const slug of productSlugs) {
       });
     }
 
-    // Só foto da loja vai para o JSON-LD; ilustração provisória fica de fora (ADR-0003).
+    // Só foto da loja vai para o JSON-LD; ilustração provisória fica de fora (ADR-0009).
     if (product.image.kind === "foto") {
       const [image] = data!["image"] as string[];
       expect((await request.get(image!)).status()).toBe(200);

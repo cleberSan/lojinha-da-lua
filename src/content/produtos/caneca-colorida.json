@@ -3,9 +3,9 @@
   "category": "canecas",
   "summary": "Caneca com alça e parte interna coloridas, personalizada com a sua arte.",
   "image": {
-    "src": "../../assets/produtos/caneca-colorida.svg",
-    "alt": "Ilustração de uma caneca branca com alça e parte interna vermelhas e uma lua crescente estampada",
-    "kind": "ilustracao"
+    "src": "../../assets/produtos/caneca-colorida.jpg",
+    "alt": "Três canecas com interior e alça vermelhos, estampadas com a arte de um personagem de anime em vermelho e preto",
+    "kind": "foto"
   },
   "variants": [
     {
