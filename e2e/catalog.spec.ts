@@ -96,6 +96,19 @@ test("a página de contato lista os dois WhatsApp e o Instagram", async ({ page 
   );
 });
 
+test("o crédito do rodapé leva ao portfólio do autor e ao código", async ({ page }) => {
+  await page.goto("/");
+  const footer = page.getByRole("contentinfo");
+  await expect(footer.getByRole("link", { name: /^Cleber Costa Santos/ })).toHaveAttribute(
+    "href",
+    "https://portfolio-web-psi-rust.vercel.app/",
+  );
+  await expect(footer.getByRole("link", { name: /^Código no GitHub/ })).toHaveAttribute(
+    "href",
+    "https://github.com/cleberSan/lojinha-da-lua",
+  );
+});
+
 test("o menu leva a Meu pedido e Contato, e o rodapé à Privacidade", async ({ page }) => {
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Principal" });

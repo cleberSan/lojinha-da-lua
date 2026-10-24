@@ -5,6 +5,7 @@ import { buildWhatsAppUrl } from "../domain/whatsapp";
 import ExternalLink from "./ExternalLink.astro";
 import Icon from "./Icon.astro";
 
+const portfolioUrl = "https://portfolio-web-psi-rust.vercel.app";
 const repositoryUrl = "https://github.com/cleberSan/lojinha-da-lua";
 ---
 
@@ -58,7 +59,11 @@ const repositoryUrl = "https://github.com/cleberSan/lojinha-da-lua";
     </section>
   </div>
   <p class="container credit small muted">
-    Site feito por <ExternalLink href={repositoryUrl}>Cleber Costa Santos</ExternalLink>
+    Site feito por <ExternalLink href={portfolioUrl}>Cleber Costa Santos</ExternalLink>
+    <span class="separator" aria-hidden="true">
+      ·
+    </span>
+    <ExternalLink href={repositoryUrl}>Código no GitHub</ExternalLink>
   </p>
 </footer>
 
@@ -103,5 +108,10 @@ const repositoryUrl = "https://github.com/cleberSan/lojinha-da-lua";
     margin-top: 2rem;
     padding-block: 1.25rem;
     border-top: 1px solid rgb(138 242 252 / 0.12);
+  }
+
+  /* O Astro junta os elementos do crédito sem espaço entre eles. */
+  .separator {
+    margin-inline: 0.5em;
   }
 </style>
