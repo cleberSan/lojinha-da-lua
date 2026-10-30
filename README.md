@@ -30,11 +30,11 @@ Cada botão de pedido abre `wa.me` com a mensagem pronta (produto, variação, p
 - CSP por hash sem `'unsafe-inline'`, HSTS e demais cabeçalhos de segurança, de uma fonte só ([ADR-0004](docs/adr/0004-csp-por-hash-e-cabecalhos.md)).
 - Testes de unidade com Vitest (mínimo de 80% de cobertura no CI) e E2E com Playwright em desktop e celular, com axe (WCAG 2.1 AA), sobre o build servido pelo mesmo runtime da Cloudflare.
 - Os mesmos testes E2E rodam todo dia contra o site publicado e abrem uma issue se algo mudar no ar; o endereço de produção fica no código, sem variável no painel da Cloudflare ([ADR-0008](docs/adr/0008-conferencia-do-site-no-ar.md)).
-- CodeQL, revisão de dependências e Dependabot.
+- CodeQL, revisão de dependências e Dependabot, com auto-merge só para atualização de baixo risco ([ADR-0010](docs/adr/0010-dependabot-com-auto-merge.md)).
 
 ## Decisões
 
-As decisões arquiteturais estão em [docs/adr](docs/adr): stack, hospedagem gratuita na Cloudflare (a Vercel Hobby não permite uso comercial), fotos dos produtos a partir dos flyers da loja, CSP, pedido pelo WhatsApp, "Montar pedido" no navegador, SEO e conferência do site no ar.
+As decisões arquiteturais estão em [docs/adr](docs/adr): stack, hospedagem gratuita na Cloudflare (a Vercel Hobby não permite uso comercial), fotos dos produtos a partir dos flyers da loja, CSP, pedido pelo WhatsApp, "Montar pedido" no navegador, SEO, conferência do site no ar e atualização de dependências.
 
 ## Rodando localmente
 
