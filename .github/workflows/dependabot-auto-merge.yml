@@ -1,0 +1,114 @@
+name: Auto-merge do Dependabot
+
+# Liga o auto-merge do GitHub só nos PRs do Dependabot de baixo risco (ADR-0010). Quem mescla é o GitHub, e só
+# depois de todos os checks obrigatórios passarem no PR. Este workflow não faz checkout nem roda código do PR:
+# lê os metadados que o Dependabot grava no commit assinado e decide. Na dúvida, o PR fica para revisão manual.
+on:
+  pull_request:
+
+permissions: {}
+
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  # Minor destes pacotes muda o que o site gera e fica para revisão manual; patch passa.
+  FRAMEWORK: ^(astro|@astrojs/.+|react|react-dom)$
+
+jobs:
+  decidir:
+    name: Decidir o auto-merge
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'cleberSan/lojinha-da-lua'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      # O GitHub exige escrita em conteúdo para ligar o auto-merge.
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Ler os metadados do Dependabot
+        id: meta
+        if: github.actor == 'dependabot[bot]'
+        # Sem metadados confiáveis a decisão é revisão manual, então a falha aqui não para o job.
+        continue-on-error: true
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+
+      - name: Aplicar a política
+        id: politica
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          ACTOR: ${{ github.actor }}
+          META: ${{ steps.meta.outcome }}
+          MANTENEDORES: ${{ steps.meta.outputs.maintainer-changes }}
+          DEPENDENCIAS: ${{ steps.meta.outputs.updated-dependencies-json }}
+        run: |
+          set -euo pipefail
+
+          manual() {
+            echo "decisao=manual" >> "$GITHUB_OUTPUT"
+            printf '### Revisão manual\n\n%s\n' "$1" >> "$GITHUB_STEP_SUMMARY"
+            echo "Revisão manual: $1"
+            exit 0
+          }
+
+          [[ "$ACTOR" == "dependabot[bot]" ]] || manual "O último push foi de $ACTOR, não do Dependabot."
+          [[ "$META" == "success" ]] || manual "Não deu para confirmar que o PR e o commit são do Dependabot."
+          [[ "$MANTENEDORES" != "true" ]] || manual "O pacote trocou de mantenedores: confira antes de aceitar."
+
+          # O fetch-metadata confere só o primeiro commit; aqui todos precisam ser do Dependabot e assinados.
+          commits=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/commits" --paginate \
+            --jq '.[] | "\(.author.login // "-") \(.commit.verification.verified)"' | sort -u)
+          [[ "$commits" == "dependabot[bot] true" ]] \
+            || manual "Há commit no PR que não é do Dependabot ou não tem assinatura verificada."
+
+          motivos=$(jq -r --arg framework "$FRAMEWORK" '
+            if length == 0 then "O PR não lista dependências."
+            else
+              [ .[]
+                | (.dependencyName // "") as $nome
+                | "\($nome) \(.prevVersion // "?") → \(.newVersion // "?")" as $item
+                | if $nome == "" then "dependência sem nome nos metadados"
+                  elif $nome == "dependabot/fetch-metadata" then "\($item): atualiza a própria automação"
+                  elif .packageEcosystem == "github_actions" then
+                    if ($nome | test("^(actions|github)/")) then empty else "\($item): action de terceiros" end
+                  elif .updateType == "version-update:semver-major" then "\($item): versão major"
+                  elif .updateType == "version-update:semver-minor" then
+                    if ($nome | test($framework)) then "\($item): minor de framework" else empty end
+                  elif .updateType == "version-update:semver-patch" then empty
+                  else "\($item): tipo de atualização desconhecido"
+                  end
+              ] | join("; ")
+            end' <<< "$DEPENDENCIAS")
+          [[ -z "$motivos" ]] || manual "$motivos"
+
+          echo "decisao=auto" >> "$GITHUB_OUTPUT"
+          {
+            printf '### Auto-merge\n\nO GitHub mescla quando todos os checks obrigatórios passarem.\n\n'
+            jq -r '.[] | "- \(.dependencyName) \(.prevVersion // "?") → \(.newVersion // "?") (\(.updateType // "?"))"' \
+              <<< "$DEPENDENCIAS"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "Auto-merge: dentro da política."
+
+      - name: Ligar o auto-merge
+        if: steps.politica.outputs.decisao == 'auto'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          URL: ${{ github.event.pull_request.html_url }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        # Squash: um commit por atualização na main, fácil de reverter.
+        run: gh pr merge "$URL" --auto --squash --match-head-commit "$HEAD"
+
+      # Um PR que já teve o auto-merge ligado pode mudar (o Dependabot atualiza o grupo ou alguém faz push).
+      # Fora da política, ou se a própria política falhar, o auto-merge é desligado.
+      - name: Desligar o auto-merge
+        if: ${{ !cancelled() && steps.politica.outputs.decisao != 'auto' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          ligado=$(gh pr view "$URL" --json autoMergeRequest --jq '.autoMergeRequest != null')
+          if [[ "$ligado" == "true" ]]; then
+            gh pr merge "$URL" --disable-auto
+          fi

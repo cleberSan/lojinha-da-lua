@@ -1,24 +1,52 @@
+# Política de atualização e de auto-merge: docs/adr/0010-dependabot-com-auto-merge.md.
+# Versão nova só vira PR depois de 7 dias publicada (cooldown): tempo para o npm tirar do ar uma versão
+# comprometida. Correção de segurança não espera.
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
+      # Segunda às 4h: o merge automático vai ao ar antes da conferência diária do site (6h23, ADR-0008).
       interval: weekly
+      day: monday
+      time: "04:00"
+      timezone: America/Sao_Paulo
+    cooldown:
+      default-days: 7
     groups:
+      # Minor e patch de tudo num PR só por semana: um merge por vez, sem PR parado como desatualizado.
+      dependencias:
+        patterns: ["*"]
+        update-types: [minor, patch]
+      # Majors que precisam casar versão sobem juntos: Astro e integrações, React e tipos, Vitest, ESLint e plugins.
       astro:
         patterns: ["astro", "@astrojs/*"]
+        update-types: [major]
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+        update-types: [major]
       testes:
-        patterns: ["vitest", "@vitest/*", "@playwright/test", "@axe-core/*"]
+        patterns: ["vitest", "@vitest/*"]
+        update-types: [major]
       lint:
-        patterns: ["eslint", "eslint-*", "typescript-eslint", "prettier", "prettier-*"]
-      fontes:
-        patterns: ["@fontsource/*"]
+        patterns: ["eslint", "@eslint/*", "eslint-*", "typescript-eslint"]
+        update-types: [major]
+    ignore:
+      # Tipos do Node não sobem de major sozinhos: trocar o Node do .nvmrc é uma decisão à parte.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 5
 
+  # Em outro dia da semana, para não disputar o merge com o PR das dependências.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+      day: wednesday
+      time: "05:00"
+      timezone: America/Sao_Paulo
+    cooldown:
+      default-days: 7
     groups:
       actions:
         patterns: ["*"]
