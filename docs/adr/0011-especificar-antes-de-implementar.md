@@ -1,6 +1,6 @@
 # ADR-0011: Especificar antes de implementar (Spec-Driven Development)
 
-- Status: proposto
+- Status: aceito
 - Data: 2026-11-04
 
 ## Contexto
@@ -12,7 +12,7 @@ Em 2026-11-04 Cleber decidiu adotar Spec-Driven Development em todos os reposit�
 ## Decisão
 
 - **Specs em `docs/specs/NNNN-titulo/`**, ao lado dos ADRs: `spec.md` (o quê e por quê), `plano.md` (como) e `tarefas.md` (em que ordem), conforme [docs/specs/README.md](../specs/README.md).
-- **Nível completo, com a spec aprovada por Cleber antes do código,** quando a mudança mexe no fluxo de pedido ou no formato guardado no navegador (ADR-0005, ADR-0006), no schema do catálogo, em coleta de dado de cliente, em CSP, cabeçalhos, SEO ou URL pública, ou traz hospedagem, dependência, serviço, custo ou licença novos.
+- **Nível completo, com a spec aprovada por Cleber antes do código** (decisão de Cleber em 2026-11-04: o portão vale só neste nível), quando a mudança mexe no fluxo de pedido ou no formato guardado no navegador (ADR-0005, ADR-0006), no schema do catálogo, em coleta de dado de cliente, em CSP, cabeçalhos, SEO ou URL pública, ou traz hospedagem, dependência, serviço, custo ou licença novos.
 - **Nível leve** (só `spec.md`) para página, seção ou comportamento novo sem esses gatilhos; **direto** (só o PR) para preço, texto, produto ou foto vindos da loja, atualização de dependência (ADR-0010), documentação, refatoração e bug com causa clara.
 - **Critérios de aceite `CA-NN`** em EARS; o teste Vitest ou Playwright que prova cada um leva o comentário `// spec NNNN CA-NN`.
 - **Spec por mudança:** depois de `implementada`, só o status muda; comportamento novo ganha spec nova.
