@@ -1,3 +1,5 @@
+Spec: <!-- docs/specs/NNNN-titulo/ ou "sem spec: nível direto (motivo)" -->
+
 ## Antes
 
 ## Depois
@@ -6,6 +8,8 @@
 
 ## Checklist
 
+- [ ] Spec linkada e com status `implementada`, ou motivo do nível direto
+- [ ] Todo critério de aceite (`CA-NN`) com teste
 - [ ] Testes cobrem cenários felizes, de erro e limites
 - [ ] Acessibilidade verificada (semântica, contraste, navegação por teclado)
 - [ ] Preços, contatos e textos vieram da loja (nada inventado)
